@@ -11,26 +11,41 @@
 
     <!-- Repository 1 -->
     <div class="repository">
-        <h2>Repository 1</h2>
-        <p class="abstract">This is the abstract for Repository 1. It provides a brief overview of the research.</p>
-        <div class="progress-bar">
-            <div class="progress" style="width: 75%;"></div> <!-- Adjust width for progress -->
+        <h2 onclick="toggleContent('repo1')">Repository 1</h2>
+        <div id="repo1" class="content" style="display: none;">
+            <p class="abstract">This is the abstract for Repository 1. It provides a brief overview of the research.</p>
+            <div class="progress-bar">
+                <div class="progress" style="width: 75%;"></div> <!-- Adjust width for progress -->
+            </div>
+            <p class="progress-text">75% completed</p> <!-- Progress text -->
+            <a href="pdf/subtitles_caption.pdf" target="_blank">Download PDF</a>
         </div>
-        <p class="progress-text">75% completed</p> <!-- Progress text -->
-        <a href="pdf/subtitles_caption.pdf" target="_blank">Download PDF</a>
     </div>
 
     <!-- Repository 2 -->
     <div class="repository">
-        <h2>Repository 2</h2>
-        <p class="abstract">This is the abstract for Repository 2. It provides a brief overview of the research.</p>
-        <div class="progress-bar">
-            <div class="progress" style="width: 30%;"></div> <!-- Adjust width for progress -->
+        <h2 onclick="toggleContent('repo2')">Repository 2</h2>
+        <div id="repo2" class="content" style="display: none;">
+            <p class="abstract">This is the abstract for Repository 2. It provides a brief overview of the research.</p>
+            <div class="progress-bar">
+                <div class="progress" style="width: 30%;"></div> <!-- Adjust width for progress -->
+            </div>
+            <p class="progress-text">30% completed</p> <!-- Progress text -->
+            <a href="pdf/subtitles_caption.pdf" target="_blank">Download PDF</a>
         </div>
-        <p class="progress-text">30% completed</p> <!-- Progress text -->
-        <a href="pdf/subtitles_caption.pdf" target="_blank">Download PDF</a>
     </div>
 
     <!-- Add more repositories as needed -->
+
+    <script>
+        function toggleContent(repoId) {
+            const content = document.getElementById(repoId);
+            if (content.style.display === "none") {
+                content.style.display = "block";
+            } else {
+                content.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
