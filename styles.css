@@ -7,6 +7,7 @@ body {
     border: 1px solid #ccc;
     padding: 15px;
     margin-bottom: 20px;
+    cursor: pointer; /* Change cursor to pointer for clickable titles */
 }
 
 .abstract {
@@ -43,4 +44,10 @@ a:hover {
     margin: 5px 0;
     font-size: 14px;
     color: #555;
+}
+
+/* Hidden content by default */
+.content {
+    display: none;
+    margin-top: 10px;
 }
