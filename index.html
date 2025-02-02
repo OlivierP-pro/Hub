@@ -4,17 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects-Hub</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Header */
+        header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        /* Introduction */
+        .introduction {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .introduction p {
+            font-size: 1.1em;
+            text-align: justify;
+        }
+
+        /* CV Highlights */
+        .cv-highlights {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cv-highlights ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .cv-highlights li {
+            margin-bottom: 10px;
+        }
+
+        .cv-highlights strong {
+            color: #007BFF;
+        }
+
+        /* Repository Section */
+        .repository {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .repository h2 {
+            cursor: pointer;
+            color: #007BFF;
+            transition: color 0.3s ease;
+        }
+
+        .repository h2:hover {
+            color: #0056b3;
+        }
+
+        .content {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .abstract {
+            font-size: 1em;
+            text-align: justify;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #007BFF;
+            border-radius: 5px;
+        }
+
+        .progress-text {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome </h1>
-<!-- Introduction -->
+    <!-- Header -->
+    <header>
+        <h1>Welcome to Projects-Hub</h1>
+    </header>
+
+    <!-- Introduction -->
     <div class="introduction">
         <p>
-                This website serves as a comprehensive collection of my projects and contributions. 
-            My work is mainly on Operational Research: Mathematical Aspects and Applications, focusing on optimization techniques and their real-world use cases .
+            This website serves as a comprehensive collection of my projects and contributions. 
+            My work is mainly on Operational Research: Mathematical Aspects and Applications, focusing on optimization techniques and their real-world use cases.
         </p>
     </div>
+
     <!-- CV Highlights -->
     <div class="cv-highlights">
         <h2>About Me</h2>
@@ -22,7 +158,6 @@
             <li><strong>Education:</strong> [2 Bachelors in Mathematics and in Physics] from [Université Savoie Mont-Blanc].</li>
             <li><strong>Current Position:</strong> [M1 Mathematics specialized in Probability, Statistics and Optimization] at [Sorbonne Université].</li>
             <li><strong>Research Interests:</strong> [Operational Research, Data Analysis, Stochastic Calculus etc.].</li>
-            <!--<li><strong>Publications:</strong> [Number of Publications, e.g., 10+ peer-reviewed articles].</li> -->
             <li><strong>Contact:</strong> [olivier.p.etude@gmail.com].</li>
         </ul>
     </div>
@@ -54,6 +189,11 @@
     </div>
 
     <!-- Add more repositories as needed -->
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2023 Projects-Hub. All rights reserved.
+    </footer>
 
     <script>
         function toggleContent(repoId) {
