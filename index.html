@@ -161,6 +161,36 @@
             <li><strong>Contact:</strong> olivier.p.etude@gmail.com</li>
         </ul>
     </div>
+
+<!-- Repository 2 -->
+<div class="repository">
+    <h2 onclick="toggleContent('repovolatility')">The log S-fBM model</h2>
+    <div id="repovolatility" class="content" style="display: none;">
+        <p class="abstract">
+            The log Stationary Fractional Brownian Motion (log S-fBM) is a novel stochastic process designed to model financial volatility. It bridges rough and multifractal volatility models by capturing the "roughness" of volatility when the Hurst exponent \( H \) approaches zero. The log S-fBM is particularly useful because it combines the flexibility of fractional Brownian motion with stationary covariance, making it suitable for modeling both short-term and long-term volatility dynamics.
+        </p>
+        <p>
+            By taking the exponential of the S-fBM process, the resulting measure reflects multifractal properties of asset returns, such as non-trivial scaling behavior and heavy-tailed distributions. This makes the log S-fBM a powerful tool for accurately reproducing empirical features of financial markets, including the power-law behavior of option prices near maturity.
+        </p>
+        <p>
+            To estimate the parameters of the log S-fBM model, advanced statistical techniques like the Generalized Method of Moments (GMM) are employed. The GMM approach leverages analytical expressions for the second-order moments of the log S-fBM measure and its logarithm, ensuring robust parameter estimation even with small intermittency effects. The methodology is validated through numerical simulations and applied to real-world data, such as daily volatility of individual stocks and market indices.
+        </p>
+        <p>
+            Key advantages of the log S-fBM include:
+            <ul>
+                <li><strong>Flexibility:</strong> Unifies rough and multifractal volatility models, enabling analysis across different volatility regimes.</li>
+                <li><strong>Accuracy:</strong> Captures key empirical properties of financial volatility, such as scaling behavior and heavy tails.</li>
+                <li><strong>Practicality:</strong> Efficient calibration to large datasets using GMM ensures real-world applicability.</li>
+            </ul>
+        </p>
+        <div class="progress-bar">
+            <div class="progress" style="width: 20%;"></div> <!-- Adjust width for progress -->
+        </div>
+        <p class="progress-text">20% completed</p> <!-- Progress text -->
+        <a href="pdf/v1_S_fbm.pdf" target="_blank">v1 report</a>
+    </div>
+</div>
+    
 <div class="repository">
     <h2 onclick="toggleContent('repo2')">Creating a Voting System</h2>
     <div id="repo2" class="content" style="display: none;">
