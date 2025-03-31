@@ -51,27 +51,3 @@ a:hover {
     display: none;
     margin-top: 10px;
 }
-
-
-/* New tinier repository style */
-.tiny-repository {
-    padding: 4px; /* Smaller padding */
-    margin-bottom: 5px; /* Reduced margin */
-}
-
-.tiny-repository h2 {
-    font-size: 1em; /* Smaller font size for the title */
-    padding: 4px; /* Reduced padding */
-}
-
-.tiny-repository .content {
-    padding: 4px; /* Smaller padding for content */
-}
-
-.tiny-repository .progress-bar {
-    height: 5px; /* Thinner progress bar */
-}
-
-.tiny-repository .progress-text {
-    font-size: 0.7em; /* Smaller text for progress percentage */
-}
