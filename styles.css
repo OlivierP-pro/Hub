@@ -55,17 +55,17 @@ a:hover {
 
 /* New tinier repository style */
 .tiny-repository {
-    padding: 5px; /* Smaller padding */
-    margin-bottom: 10px; /* Reduced margin */
+    padding: 4px; /* Smaller padding */
+    margin-bottom: 5px; /* Reduced margin */
 }
 
 .tiny-repository h2 {
     font-size: 1em; /* Smaller font size for the title */
-    padding: 5px; /* Reduced padding */
+    padding: 4px; /* Reduced padding */
 }
 
 .tiny-repository .content {
-    padding: 5px; /* Smaller padding for content */
+    padding: 4px; /* Smaller padding for content */
 }
 
 .tiny-repository .progress-bar {
