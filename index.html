@@ -52,9 +52,17 @@
   details li { margin-bottom: .2rem; }
 
   /* Projects */
-  article { padding: 1.3rem 0 1.4rem; border-top: 1px solid var(--rule); }
-  article:first-of-type { border-top: 0; padding-top: .3rem; }
-  article h3 { font-size: 1.1rem; margin: 0 0 .45rem; line-height: 1.35; }
+  article { border-top: 1px solid var(--rule); }
+  article:last-of-type { border-bottom: 1px solid var(--rule); }
+  article details { margin: 0; }
+  article summary { list-style: none; cursor: pointer; padding: .75rem 0; display: flex; align-items: baseline; gap: .6rem; }
+  article summary::-webkit-details-marker { display: none; }
+  article summary::after { content: "+"; margin-left: auto; color: var(--muted); font-size: 1.1em; }
+  article details[open] summary::after { content: "\2212"; }
+  article summary:hover h3 { color: var(--accent); }
+  article h3 { font-size: 1.05rem; margin: 0; line-height: 1.35; font-weight: normal; }
+  article .body { padding: 0 0 1.1rem 2.4em; }
+  @media (max-width: 560px) { article .body { padding-left: 0; } }
   article h3 .num { display: inline-block; min-width: 2.4em; font-weight: bold; }
   .meta { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .9rem; font-size: .9em; color: var(--muted); margin-bottom: .7rem; }
   .bar { width: 120px; height: 4px; background: var(--track); border-radius: 2px; overflow: hidden; }
@@ -88,44 +96,18 @@
 
 <h2 class="section"><span class="num">1</span>About</h2>
 <ul class="facts">
-  <li><strong>Education.</strong> BSc in Mathematics and BSc in Statistical Physics, Université Savoie Mont-Blanc, Chambéry (2023).</li>
-  <li><strong>Current position.</strong> MSc (M2) in Mathematical Modelling, specialising in Probability and PDE, Sorbonne Université &amp; École Polytechnique, Paris (2023–2026). Available from January 2027.</li>
+  <li><strong>Current position.</strong> MSc (M2) in Mathematical Modelling, specialising in Probability and PDE, Sorbonne Université &amp; École Polytechnique, Paris.</li>
+  <li><strong>Education.</strong> BSc in Mathematics and BSc in Statistical Physics, Université Savoie Mont-Blanc, Chambéry.</li>
   <li><strong>Research interests.</strong> Rough volatility in statistical finance, operational research, stochastic calculus, Bayesian statistics, data analysis and optimisation.</li>
   <li>
     <details>
       <summary>Professional experience</summary>
       <ul>
-        <li><strong>2026: R&amp;D Stochastic Modelling Intern, Parrot Drones (Paris).</strong>
-          <ul>
-            <li>Multi-sensor flight-log processing (IMU, GPS, barometer): time synchronisation, resampling, missing values, spectral analysis (FFT, power spectral density).</li>
-            <li>State estimation and sensor fusion: EKF, UKF, Invariant EKF on Lie groups, Moving Horizon Estimation; consistency tests on innovations with the Mahalanobis distance, noise covariance tuning (Q, R).</li>
-            <li>6-degree-of-freedom dynamics model with Dryden turbulence to generate synthetic wind scenarios; PID and feedforward control laws.</li>
-            <li>Uncertainty quantification: Polynomial Chaos (Hermite), Unscented Transform, Sobol indices, validated against Monte Carlo simulations.</li>
-            <li>Porting of Matlab prototypes to C++; benchmark of filters on accuracy, computational cost and runtime (Matlab/Simulink, C++, Python).</li>
-          </ul>
-        </li>
-        <li><strong>2025: Quantitative Research Project (TER), Università di Corsica, supervised by J.-F. Muzy.</strong> Unified log S-fBM model of rough and multifractal volatility in financial markets.
-          <ul>
-            <li>Simulation of rough/multifractal paths; estimation of the Hurst exponent and intermittency on high-frequency data (GMM); heavy-tailed returns.</li>
-            <li>Literature review and comparison with GARCH and stochastic volatility models; Monte Carlo option pricing.</li>
-            <li>Predictive features from lead-lag transforms and randomised signatures; signature regression with time-series cross-validation (Python, NumPy, SciPy, Pandas, scikit-learn, statsmodels).</li>
-          </ul>
-        </li>
-        <li><strong>2024/2025: Production Yield Intern, X-FAB Semiconductor.</strong>
-          <ul>
-            <li>SQL extraction (joins, CTEs, window functions) from production databases; Python ETL pipeline (Pandas, SQLAlchemy) feeding Power BI dashboards on yield and defect-rate KPIs per lot and per equipment.</li>
-            <li>Automated data-quality checks (duplicates, missing values, inconsistencies); statistical analysis in JMP, reporting automation in Python and Excel/VBA.</li>
-            <li>Defect prediction model: Poisson point processes and Extreme Value Theory (Peaks Over Threshold, Generalised Pareto), fitted by maximum likelihood; out-of-sample validation, stress scenarios on extreme quantiles and Bayesian decision support.</li>
-            <li>Combinatorial optimisation of production scheduling (C).</li>
-          </ul>
-        </li>
-        <li><strong>2023: Signal Processing Intern, Annecy Laboratory of Particle Physics (LAPP).</strong>
-          <ul>
-            <li>Consolidation of gravitational-wave data from VIRGO, LIGO and KAGRA into a common format (SQL, Python); data quality control.</li>
-            <li>Whitening, band-pass filtering, Welch power spectral density and spectrograms (scipy.signal); simulated signals to test the processing chain.</li>
-          </ul>
-        </li>
-        <li><strong>2023–2026: University evening classes and oral examinations (khôlles)</strong> in applied mathematics (3 hours/week).</li>
+        <li><strong>2026, Parrot Drones (Paris).</strong> R&amp;D stochastic modelling intern: sensor fusion (EKF, UKF), uncertainty quantification for drone flight.</li>
+        <li><strong>2025, Università di Corsica.</strong> Research project with J.-F. Muzy on the log S-fBM model of rough and multifractal volatility.</li>
+        <li><strong>2024/2025, X-FAB Semiconductor.</strong> Production yield intern: data pipelines, defect prediction, production scheduling.</li>
+        <li><strong>2023, LAPP (Annecy).</strong> Signal processing intern on gravitational-wave data (VIRGO, LIGO, KAGRA).</li>
+        <li><strong>2023–2026.</strong> Evening classes and oral examinations in applied mathematics.</li>
       </ul>
     </details>
   </li>
@@ -136,52 +118,73 @@
 <h2 class="section"><span class="num">2</span>Projects</h2>
 
 <article>
-  <h3><span class="num">2.1</span>Online Uncertainty Quantification for a Drone's Return-to-Home Decision</h3>
-  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/rth_uncertainty.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <details>
+    <summary><h3><span class="num">2.1</span>Online Uncertainty Quantification for a Drone's Return-to-Home Decision</h3></summary>
+    <div class="body">  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/rth_uncertainty.pdf" target="_blank">[PDF, 2 pages]</a></div>
   <p>A drone triggers its automatic return when the remaining energy no longer covers the predicted return energy plus a fixed safety margin; read as a forecast, this margin has the same spread for every flight. We build instead a flight-conditional predictive law of the battery charge at arrival and set the margin from a chosen risk level. The prediction loop has exactly five random inputs, each modelled as &mu; + F&xi; with a Gaussian germ frozen over the return. Candidate uncertainty models are ranked with the CRPS, a strictly proper scoring rule, through a logarithmic skill score that splits exactly into a centre and a width term, the latter bounded by 0.2256. On board, uncertainty is propagated by an unscented transform and by a Hermite polynomial chaos whose coefficients are learnt online by a Kalman filter, with a three-term bound on the error of the decision quantile. Under a mean-survival criterion, the value of conditional uncertainty is shown to be of second order, positive only beyond z = &radic;2 or with conditional bias correction.</p>
   <p class="keywords"><em>Keywords:</em> uncertainty quantification, proper scoring rules, CRPS, polynomial chaos, unscented transform, Kalman filter.</p>
+    </div>
+  </details>
 </article>
 
 <article>
-  <h3><span class="num">2.2</span>Inferring Audience Interests with BERT for Ad Targeting</h3>
-  <div class="meta"><div class="bar"><span style="width:50%"></span></div><span>50% completed</span><span>5 clients</span><a href="pdf/audience_interest_bert.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <details>
+    <summary><h3><span class="num">2.2</span>Inferring Audience Interests with BERT for Ad Targeting</h3></summary>
+    <div class="body">  <div class="meta"><div class="bar"><span style="width:50%"></span></div><span>50% completed</span><span>5 clients</span><a href="pdf/audience_interest_bert.pdf" target="_blank">[PDF, 2 pages]</a></div>
   <p>Advertisers usually target what a video is about rather than who watches it. We infer the interests of a channel's audience from the public comments it receives. Each comment is mapped to the unit sphere by a contrastively fine-tuned BERT encoder, and a channel is represented by the kernel mean embedding of its comment distribution. Under a topic-mixture model, this embedding is a linear image of the audience's average interest vector; its inner product with an advertiser's description is the expected affinity of a random commenter with the product, and its estimator concentrates at a dimension-free rate. Look-alike targeting reduces to a maximum mean discrepancy between audiences. On 3,154 French YouTube channels, the method recovers channels already sponsored by a given advertiser with AUC 0.87, an 18&times; lift over random in the top 20, without any individual-level profiling.</p>
   <p class="keywords"><em>Keywords:</em> BERT, sentence embeddings, kernel mean embedding, maximum mean discrepancy, audience targeting.</p>
+    </div>
+  </details>
 </article>
 
 <article>
-  <h3><span class="num">2.3</span>The log S-fBM Model: a Stationary Bridge between Rough and Multifractal Volatility</h3>
-  <div class="meta"><div class="bar"><span style="width:20%"></span></div><span>20% completed</span><a href="pdf/log_sfbm.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <details>
+    <summary><h3><span class="num">2.3</span>The log S-fBM Model: a Stationary Bridge between Rough and Multifractal Volatility</h3></summary>
+    <div class="body">  <div class="meta"><div class="bar"><span style="width:20%"></span></div><span>20% completed</span><a href="pdf/log_sfbm.pdf" target="_blank">[PDF, 2 pages]</a></div>
   <p>Empirical volatility is rough: its logarithm behaves like a fractional Brownian motion with Hurst exponent H &asymp; 0.1 or smaller, while multifractal random measures (MRM) describe the limit H &rarr; 0 but have no roughness parameter. The log stationary fractional Brownian motion (log S-fBM) contains both. We prove that its covariance is admissible, show its convergence to the log-normal MRM as H &rarr; 0 at fixed intermittency, and derive exact second-order moments of the integrated variance and of its logarithm. These moments define a generalised method of moments (GMM) estimator that avoids the upward bias of scaling-based estimators of H, observed in simulation where a true H = 0.002 is estimated at 0.082.</p>
   <p class="keywords"><em>Keywords:</em> rough volatility, multifractal random measure, fractional Brownian motion, generalised method of moments.</p>
+    </div>
+  </details>
 </article>
 
 <article>
-  <h3><span class="num">2.4</span>End-to-End Verifiable Online Voting without a Blockchain</h3>
-  <div class="meta"><div class="bar"><span style="width:20%"></span></div><span>20% completed</span><a href="pdf/voting_system.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <details>
+    <summary><h3><span class="num">2.4</span>End-to-End Verifiable Online Voting without a Blockchain</h3></summary>
+    <div class="body">  <div class="meta"><div class="bar"><span style="width:20%"></span></div><span>20% completed</span><a href="pdf/voting_system.pdf" target="_blank">[PDF, 2 pages]</a></div>
   <p>More than 77% of French voters abroad voted online in the 2022 legislative elections, yet none could verify that their ballot had been counted. We describe an end-to-end verifiable protocol in the line of Helios that requires no blockchain. Ballots are encrypted with exponential ElGamal, so that the tally is computed on ciphertexts; each ballot carries non-interactive zero-knowledge proofs of validity; the decryption key is shared among trustees; every voter can find their ballot on a public bulletin board and anyone can recompute the result. We state the security reductions, prove the soundness and zero-knowledge property of the proofs, and show that universal verification of an election with 10<sup>6</sup> voters takes minutes on commodity hardware, without the energy cost of a public blockchain.</p>
   <p class="keywords"><em>Keywords:</em> homomorphic encryption, zero-knowledge proofs, threshold decryption, verifiable voting.</p>
+    </div>
+  </details>
 </article>
 
 <article>
-  <h3><span class="num">2.5</span>List Scheduling of Dependent Non-Preemptive Tasks</h3>
-  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/scheduling.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <details>
+    <summary><h3><span class="num">2.5</span>List Scheduling of Dependent Non-Preemptive Tasks</h3></summary>
+    <div class="body">  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/scheduling.pdf" target="_blank">[PDF, 2 pages]</a></div>
   <p>We minimise the makespan of tasks with precedence constraints on m identical machines without preemption, a strongly NP-hard problem. List scheduling guarantees a ratio 2 &minus; 1/m for any priority rule (Graham); we compare the height, depth, t-level, b-level, number-of-successors and duration rules, a fuzzy tie-breaking rule, and a genetic algorithm searching over weighted combinations of these priorities. On 180 random graphs of 1,000 tasks, the b-level rule reduces the makespan by 2.43% on average relative to the height rule (standard error 0.30); neither the fuzzy tie-break nor the genetic algorithm yields a significant further gain, which makes b-level list scheduling the best rule at equal computational cost.</p>
   <p class="keywords"><em>Keywords:</em> P|prec|C<sub>max</sub>, list scheduling, critical path, b-level, genetic algorithms.</p>
+    </div>
+  </details>
 </article>
 
 <article>
-  <h3><span class="num">2.6</span>Bayesian Poisson Regression for Defect Prediction from Storage Time</h3>
-  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/bayesian_defects.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <details>
+    <summary><h3><span class="num">2.6</span>Bayesian Poisson Regression for Defect Prediction from Storage Time</h3></summary>
+    <div class="body">  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/bayesian_defects.pdf" target="_blank">[PDF, 2 pages]</a></div>
   <p>With about a hundred products, we model the number of defects as a function of storage time by a Bayesian Poisson regression with log link. The posterior is strictly log-concave, which justifies Laplace and Hamiltonian Monte Carlo inference. The naive quantity P(&beta;<sub>1</sub> &ne; 0 | data) equals 1 under any continuous prior; we replace it by directional probabilities, a region of practical equivalence and a Savage&ndash;Dickey Bayes factor. Rao&ndash;Blackwellised estimators give the probability that a product falls into each defect band; these probabilities increase with storage time, which yields a maximal storage time at a chosen risk level. Conditions for a causal reading and model checks (overdispersion, WAIC, leave-one-out cross-validation) are made explicit.</p>
   <p class="keywords"><em>Keywords:</em> Bayesian inference, Poisson regression, Hamiltonian Monte Carlo, Bayes factors, predictive risk.</p>
+    </div>
+  </details>
 </article>
 
 <article>
-  <h3><span class="num">2.7</span>An Automated Pipeline for Short-Form Video: Speech Recognition, Captions, Music Generation and Distribution</h3>
-  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/viral_video.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <details>
+    <summary><h3><span class="num">2.7</span>An Automated Pipeline for Short-Form Video: Speech Recognition, Captions, Music Generation and Distribution</h3></summary>
+    <div class="body">  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/viral_video.pdf" target="_blank">[PDF, 2 pages]</a></div>
   <p>We describe the mathematics of a pipeline that turns a raw video into a captioned, scored video published on YouTube, TikTok and Instagram. Speech is transcribed by Whisper, an encoder&ndash;decoder Transformer on log-Mel spectrograms; word timestamps are obtained by dynamic time warping on cross-attention; captions are formed by an optimal segmentation of the word sequence and highlighted word by word without timing drift. Background music is sampled from MusicGen, an autoregressive Transformer over residual-vector-quantised audio codes with classifier-free guidance, conditioned on the transcript and mixed at a target loudness. Publication is formulated as an assignment problem under API quotas.</p>
   <p class="keywords"><em>Keywords:</em> speech recognition, dynamic time warping, dynamic programming, neural audio codecs, music generation.</p>
+    </div>
+  </details>
 </article>
 
 </main>
