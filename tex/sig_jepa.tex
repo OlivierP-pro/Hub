@@ -1,0 +1,108 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage{hubpaper}
+\hubtitle{Signature Joint-Embedding Predictive Architectures:\\ a Rough Path Formalisation of\\ Latent Trajectory Prediction in World Models}
+\newcommand{\Sig}{\mathbb{S}}
+\newcommand{\T}{T^{(N)}}
+\newcommand{\G}{G^{(N)}}
+\newcommand{\g}{\mathfrak{g}^{(N)}}
+\newcommand{\sg}{\operatorname{sg}}
+\newcommand{\Law}{\operatorname{Law}}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent Joint-embedding predictive architectures (JEPA) learn a world model by predicting the representation of a hidden part of a signal from the representation of a visible part, rather than the signal itself. When the signal is a trajectory (a video, a controlled robot, a physical system), what should the representation of a time window be? We formalise JEPA as a tuple of encoders, a predictor and a masking law, and show that rough path theory supplies a canonical answer: the truncated signature of a learnt latent path. This embedding is compositional (Chen's identity turns temporal masking into tensor products), universal (continuous functionals of the window are linear in it), consistent under change of sampling rate, and, through the expected signature, characterises laws of trajectories. We prove that the $L^2$-optimal Signature-JEPA predictor is the conditional expected signature; that it determines the conditional law of the future and makes the expected cost of any continuous objective a linear form, which is what planning requires; that a predictor valued in the free nilpotent Lie group yields multi-step rollouts with an explicit error bound; and that a non-learnt anchor channel excludes representational collapse. A stochastic version is trained with a strictly proper scoring rule built on the signature kernel.
+\end{abstract}
+
+\section{Joint-embedding predictive architectures}
+Let $E$ be a separable Banach space of observations (frames of a video, sensor readings, states) and $X:[0,T]\to E$ the observed signal on $(\Omega,\mathcal F,(\mathcal F_t),\mathbb P)$, with $\mathcal F_t=\sigma(X_u,u\le t)$.
+
+\begin{definition}[JEPA]\label{def:jepa}
+A JEPA is a tuple $(\mathcal M,f_\theta,f_{\bar\theta},P_\psi,D)$: a law $\mathcal M$ on pairs $(I_c,I_t)$ of disjoint finite unions of intervals of $[0,T]$ (context and target); an encoder $f_\theta$ mapping a signal restricted to a set $I$ to an element of a Hilbert space $\mathcal H$; a target encoder $f_{\bar\theta}$; a predictor $P_\psi:\mathcal H\times\mathcal Q\to\mathcal H$, where $q\in\mathcal Q$ is a query describing $I_t$ relative to $I_c$ (positions, horizons, actions); and a discrepancy $D$ on $\mathcal H$. It is trained by minimising
+\begin{equation}\label{eq:jepa}
+\mathcal L=\E\,D\big(P_\psi(f_\theta(X|_{I_c}),q),\ \sg f_{\bar\theta}(X|_{I_t})\big),
+\end{equation}
+with $\sg$ the stop-gradient and $\bar\theta\leftarrow\lambda\bar\theta+(1-\lambda)\theta$.
+\end{definition}
+This is the energy-based formulation of~\cite{lecun2022}, with energy $D(P_\psi(s_c,q),s_t)$; I-JEPA~\cite{assran2023} and V-JEPA~\cite{bardes2024} are instances where $f$ is a vision transformer and $\mathcal M$ masks spatial or spatio-temporal blocks. Two questions are left open by Definition~\ref{def:jepa}: \emph{what structure $\mathcal H$ must have for temporal windows}, and \emph{what the predictor estimates}. The pair $(f_\theta,f_{\bar\theta})$ always admits the collapsed solution $f\equiv$ const, $\mathcal L=0$~\cite{grill2020,tian2021}.
+
+\section{Rough paths and signatures}
+Let $V=\R^h$, $\T(V)=\bigoplus_{k\le N}V^{\otimes k}$ with the truncated tensor product and $\|a\|=\sum_{k\le N}\|a^k\|$ (projective norms), so that $\|a\otimes b\|\le\|a\|\|b\|$. A geometric $p$-rough path $\mathbf Z$ is a multiplicative functional of finite $p$-variation, limit of canonical lifts of smooth paths~\cite{lyons1998,friz2010}; by Lyons' extension theorem it has a signature $\Sig(\mathbf Z)_{s,t}\in T((V))$, equal for bounded-variation paths to $\Sig^k_{s,t}=\int_{s<u_1<\dots<u_k<t}dZ_{u_1}\otimes\cdots\otimes dZ_{u_k}$. We use:
+(S1) \emph{Chen}~\cite{chen1957}: $\Sig_{s,u}=\Sig_{s,t}\otimes\Sig_{t,u}$.
+(S2) \emph{Decay}~\cite{lyons2007}: $\|\Sig^k_{s,t}\|\le\omega(s,t)^{k/p}/\beta_p(k/p)!$; for length $L$, $\|\Sig^k\|\le L^k/k!$ and $\|\pi_{\le N}\Sig\|\le e^L$.
+(S3) \emph{Group}: $\pi_{\le N}\Sig\in\G(V)=\exp_N(\g(V))$, $\g$ the free step-$N$ Lie algebra~\cite{reutenauer1993}, and every element of $\G$ is a truncated signature (Chow--Rashevskii).
+(S4) \emph{Uniqueness}: $\Sig$ determines the path up to tree-like equivalence~\cite{hambly2010,boedihardjo2016}, and exactly for a time-augmented path $\hat Z=(t,Z)$.
+(S5) \emph{Reparametrisation}: $\Sig(Z\circ\tau)=\Sig(Z)$ for increasing $\tau$; time augmentation restores speed.
+(S6) \emph{Universality}: by (S4), shuffle identities and Stone--Weierstrass, for $K$ compact in the time-augmented rough path space and $F\in C(K)$, $\forall\varepsilon\ \exists N,\ell\in\T(V)^*$: $\sup_K|F-\ip{\ell}{\pi_{\le N}\Sig}|<\varepsilon$.
+
+\section{Signature-JEPA}
+\begin{definition}[Sig-JEPA]
+Let $\phi_\theta:E\to\R^{h_1}$ be a learnt $C^3_b$ feature map, $a:E\to\R^{h_0}$ a fixed \emph{anchor} map, and $\Phi_\theta(t,x)=(t,a(x),\phi_\theta(x))\in V$. The latent path is $Z^\theta_t=\Phi_\theta(t,X_t)$, lifted as the rough integral $\int D\Phi_\theta\,d\mathbf X$ when $X$ is rough. The window encoder is
+\[
+f_\theta(X|_{I})=\textstyle\bigotimes_{i}\pi_{\le N}\Sig(Z^\theta)_{a_i,b_i},\qquad I=\bigcup_i[a_i,b_i],
+\]
+the predictor is $P_\psi(c,q)=\exp_N\Lambda_\psi(\log_N c,q)$ with $\Lambda_\psi$ valued in $\g$, and $D=\|\cdot\|^2_{\mathrm{HS}}$ on $\T(V)$.
+\end{definition}
+\textbf{Structural properties.} (a) By (S1), the embedding of a union of adjacent windows is the product of the embeddings: masking is algebra, and a predictor of $[s,s+\delta]$ composes into predictors of longer horizons. (b) By (S3), $P_\psi$ always outputs the signature of an actual path, whereas a predictor in $\R^{\dim\T}$ does not. (c) By (S5) and time augmentation, the embedding does not depend on the parametrisation of the window but retains durations. (d) Discrete observations $z_0,\dots,z_n$ are embedded as $\exp_N(\Delta z_1)\otimes\cdots\otimes\exp_N(\Delta z_n)$, the exact signature of the piecewise-linear interpolation; it converges as the mesh vanishes for geometric rough paths~\cite{friz2010}, so models trained at different frame rates share one target. Left-point iterated sums are not group-like and converge to the Itô, not the Stratonovich, signature. (e) For video, $\phi_\theta$ is a frame or tubelet encoder; the latent path may be a pooled vector, or a family of paths indexed by spatial patches, each with its own signature.
+
+\section{What the predictor estimates}
+\begin{proposition}\label{prop:opt}
+For fixed encoders, \eqref{eq:jepa} is minimised over measurable predictors by $P^\star(c,q)=\E[\,f_{\bar\theta}(X|_{I_t})\mid c,q\,]$. If $a$ is injective, then by (S4) $\sigma(c)=\sigma(X|_{I_c})$ and $P^\star$ is the conditional expected signature of the target window given the context.
+\end{proposition}
+\begin{proof}
+$(\T(V),\mathrm{HS})$ is a finite-dimensional Hilbert space and $\E[Y\mid W]$ is the $L^2$ projection onto $\sigma(W)$-measurable variables. Injectivity of $a$ and of $\hat Z\mapsto\Sig(\hat Z)$ identifies the $\sigma$-fields.
+\end{proof}
+
+\begin{theorem}[law and planning]\label{thm:law}
+Let $\mu_c$ be the conditional law of the target latent path given the context. (i) If $\sum_k\lambda^k\|\E[\Sig^k\mid c]\|<\infty$ for every $\lambda>0$, the untruncated $P^\star$ determines $\mu_c$~\cite{chevyrev2016}. (ii) If $\mu_c$ is supported on a compact $K$ and $F\in C(K)$ is a cost, then for every $\varepsilon$ there are $N,\ell$ with $|\E[F\mid c]-\ip{\ell}{P^\star(c,q)}|<\varepsilon$.
+\end{theorem}
+\begin{proof}
+(i) is the characterisation of laws by expected signatures. (ii) follows from (S6), linearity and monotonicity of conditional expectation.
+\end{proof}
+Thus a deterministic JEPA predictor, trained without generating pixels, is a world model in the full sense: it encodes the conditional law of the future, and the expected cost of any continuous objective, the quantity used by model-predictive control over action paths $u\in q$, is linear in its output. Without the growth condition (heavy tails), the tensor normalisation of~\cite{chevyrev2022} restores (i). Since $\G$ is not convex, $P^\star\notin\G$ in general; the defect is visible at level 2: $\E[\Sig^2]^{\mathrm{sym}}-\tfrac12\E[\Sig^1]^{\otimes2}=\tfrac12\operatorname{Cov}(\Sig^1\mid c)$. The group-valued predictor therefore estimates a mode, and the conditional covariance is read off a tensor-valued head.
+
+\textbf{Stochastic Sig-JEPA.} Let $P_\psi(c,q,\xi)$, $\xi\sim\mathcal N(0,I)$, as in the latent-variable energy model of~\cite{lecun2022}, and let $k(Z,Z')=\ip{\Sig(Z)}{\Sig(Z')}$ be the signature kernel~\cite{kiraly2019,salvi2021}, which is characteristic for laws supported on a compact set of time-augmented paths, and in general after the normalisation of~\cite{chevyrev2022}. The kernel score $\mathrm{S}(Q,y)=\tfrac12\E_{Q\otimes Q}k(Y,Y')-\E_Qk(Y,y)$ is then strictly proper~\cite{gneiting2007}: its expectation is minimised only at $Q=\mu_c$, and its excess is $\tfrac12\mathrm{MMD}_k^2(Q,\mu_c)$.
+
+\textbf{Collapse.} Since the anchor sub-path $(t,a(X))$ does not depend on $\theta$, its signature coordinates form a non-degenerate target; $\phi_\theta\equiv$ const is no longer a zero-loss solution, and $\mathcal L\ge\E\operatorname{Var}\big(\pi_{\mathrm{anc}}\Sig_{I_t}\mid c\big)$. A variance--covariance penalty~\cite{bardes2022} on $\phi_\theta$ prevents partial collapse of the learnt channels.
+
+\section{Rollout and stability}
+Chen's identity gives autoregressive forecasts in latent space: $\hat c_j=\hat c_{j-1}\otimes\hat g_j$, $\hat g_j=P_\psi(\hat c_{j-1},q_j)$.
+\begin{lemma}
+If $\|g_j\|,\|\hat g_j\|\le e^{\ell_j}$ and $\|g_j-\hat g_j\|\le\varepsilon_j$, then $\|\bigotimes_{j\le k}g_j-\bigotimes_{j\le k}\hat g_j\|\le e^{\sum_j\ell_j}\sum_j\varepsilon_je^{-\ell_j}$.
+\end{lemma}
+\begin{proof}
+Telescope $\sum_jg_1\cdots g_{j-1}(g_j-\hat g_j)\hat g_{j+1}\cdots\hat g_k$ and use submultiplicativity.
+\end{proof}
+By (S2), $\ell_j$ is the latent length of step $j$: errors add linearly, weighted by the exponential of the total latent length, which calls for Lipschitz control of $\phi_\theta$. If the system is a rough differential equation $dY=f(Y)\,d\mathbf Z$, $f\in\mathrm{Lip}^\gamma$, $\gamma>p$, the Itô--Lyons map is locally Lipschitz in the $p$-variation metric~\cite{lyons1998,friz2014}: a predicted latent rough path close to the truth yields a close response. Physical observations are recovered by a decoder trained on $\sg(\hat c)$, or by signature inversion~\cite{lyonsxu2018}; with $a(x)=x$ the endpoint is exact, $\pi_a\Sig^1_{s,s+\delta}=X_{s+\delta}-X_s$, and level 2 gives the Lévy areas.
+
+\textbf{Dimension.} $\dim\T=\frac{h^{N+1}-1}{h-1}$ while $\dim\g=\sum_{k\le N}\frac1k\sum_{m\mid k}\mu(m)h^{k/m}$; for high-dimensional observations such as video, $h$ must be small, the log-signature preferred, or the kernel trick~\cite{salvi2021} used to avoid truncation.
+
+\section{Status}
+Theoretical formulation. Next: instantiation on video and on controlled dynamical systems, and comparison with neural controlled differential equations~\cite{kidger2020} and with the signature regression of~\cite{levin2013}.
+
+\footnotesize
+\begin{thebibliography}{99}\setlength{\itemsep}{0pt}
+\bibitem{assran2023} M.~Assran et al. Self-supervised learning from images with a joint-embedding predictive architecture. \emph{CVPR}, 2023.
+\bibitem{bardes2022} A.~Bardes, J.~Ponce, Y.~LeCun. VICReg: variance-invariance-covariance regularization for self-supervised learning. \emph{ICLR}, 2022.
+\bibitem{bardes2024} A.~Bardes et al. Revisiting feature prediction for learning visual representations from video. \emph{TMLR}, 2024.
+\bibitem{boedihardjo2016} H.~Boedihardjo, X.~Geng, T.~Lyons, D.~Yang. The signature of a rough path: uniqueness. \emph{Adv.\ Math.} 293:720--737, 2016.
+\bibitem{chen1957} K.-T.~Chen. Integration of paths, geometric invariants and a generalized Baker--Hausdorff formula. \emph{Ann.\ Math.} 65(1):163--178, 1957.
+\bibitem{chevyrev2016} I.~Chevyrev, T.~Lyons. Characteristic functions of measures on geometric rough paths. \emph{Ann.\ Probab.} 44(6):4049--4082, 2016.
+\bibitem{chevyrev2022} I.~Chevyrev, H.~Oberhauser. Signature moments to characterize laws of stochastic processes. \emph{JMLR} 23(176):1--42, 2022.
+\bibitem{friz2010} P.~Friz, N.~Victoir. \emph{Multidimensional Stochastic Processes as Rough Paths}. Cambridge Univ.\ Press, 2010.
+\bibitem{friz2014} P.~Friz, M.~Hairer. \emph{A Course on Rough Paths}. Springer, 2014.
+\bibitem{gneiting2007} T.~Gneiting, A.~Raftery. Strictly proper scoring rules, prediction, and estimation. \emph{JASA} 102(477):359--378, 2007.
+\bibitem{grill2020} J.-B.~Grill et al. Bootstrap your own latent: a new approach to self-supervised learning. \emph{NeurIPS}, 2020.
+\bibitem{hambly2010} B.~Hambly, T.~Lyons. Uniqueness for the signature of a path of bounded variation and the reduced path group. \emph{Ann.\ Math.} 171(1):109--167, 2010.
+\bibitem{kidger2020} P.~Kidger, J.~Morrill, J.~Foster, T.~Lyons. Neural controlled differential equations for irregular time series. \emph{NeurIPS}, 2020.
+\bibitem{kiraly2019} F.~Kir\'aly, H.~Oberhauser. Kernels for sequentially ordered data. \emph{JMLR} 20(31):1--45, 2019.
+\bibitem{lecun2022} Y.~LeCun. A path towards autonomous machine intelligence. \emph{OpenReview}, 2022.
+\bibitem{levin2013} D.~Levin, T.~Lyons, H.~Ni. Learning from the past, predicting the statistics for the future, learning an evolving system. arXiv:1309.0260, 2013.
+\bibitem{lyons1998} T.~Lyons. Differential equations driven by rough signals. \emph{Rev.\ Mat.\ Iberoam.} 14(2):215--310, 1998.
+\bibitem{lyons2007} T.~Lyons, M.~Caruana, T.~L\'evy. \emph{Differential Equations Driven by Rough Paths}. Lecture Notes in Math.\ 1908, Springer, 2007.
+\bibitem{lyonsxu2018} T.~Lyons, W.~Xu. Inverting the signature of a path. \emph{J.\ Eur.\ Math.\ Soc.} 20(7):1655--1687, 2018.
+\bibitem{reutenauer1993} C.~Reutenauer. \emph{Free Lie Algebras}. Oxford Univ.\ Press, 1993.
+\bibitem{salvi2021} C.~Salvi, T.~Cass, J.~Foster, T.~Lyons, W.~Yang. The signature kernel is the solution of a Goursat PDE. \emph{SIAM J.\ Math.\ Data Sci.} 3(3):873--899, 2021.
+\bibitem{tian2021} Y.~Tian, X.~Chen, S.~Ganguli. Understanding self-supervised learning dynamics without contrastive pairs. \emph{ICML}, 2021.
+\end{thebibliography}
+\end{document}
