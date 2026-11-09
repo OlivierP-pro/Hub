@@ -219,6 +219,28 @@
     </ul>
 </div>
 
+<!-- Repository: audience interests -->
+<div class="repository">
+    <h2 onclick="toggleContent('repoaudience')">Inferring Audience Interests with BERT for Ad Targeting</h2>
+    <div id="repoaudience" class="content" style="display: none;">
+        <p class="abstract">
+            Advertisers usually target content (what a video is about), not audiences (who actually watches it). This project infers the interests of the audience of a social-media channel from the public comments it receives. Each comment is mapped by a contrastively fine-tuned BERT encoder to a point on the unit sphere, and a channel is represented by the <strong>kernel mean embedding</strong> of its comment distribution.
+        </p>
+        <p class="abstract">
+            Under a topic-mixture model of the audience, this embedding is a linear image of the average interest vector of the audience; its inner product with an advertiser's description equals the expected affinity of a random commenter with the product, which approximates a pointwise mutual information at the contrastive optimum. Its estimator concentrates at a dimension-free rate, and look-alike targeting reduces to a maximum mean discrepancy between audiences.
+        </p>
+        <ul>
+            <li><strong>Data:</strong> 3,154 French YouTube channels, comments only, no individual profiling.</li>
+            <li><strong>Result:</strong> recovers channels already sponsored by a given advertiser with AUC 0.87 (look-alike), an 18&times; lift over random in the top 20.</li>
+        </ul>
+        <div class="progress-bar">
+            <div class="progress" style="width: 50%;"></div>
+        </div>
+        <p class="progress-text">50% completed &middot; 5 clients</p>
+        <a href="pdf/audience_interest_bert.pdf" target="_blank">research summary (2 pages)</a>
+    </div>
+</div>
+
 <!-- Repository 2 -->
 <div class="repository">
     <h2 onclick="toggleContent('repovolatility')">The log S-fBM model</h2>
@@ -244,6 +266,7 @@
             <div class="progress" style="width: 20%;"></div> <!-- Adjust width for progress -->
         </div>
         <p class="progress-text">20% completed</p> <!-- Progress text -->
+        <a href="pdf/log_sfbm.pdf" target="_blank">research summary (2 pages)</a> &middot;
         <a href="pdf/v1_S_fbm.pdf" target="_blank">v1 report</a>
     </div>
 </div>
@@ -278,7 +301,8 @@
             <div class="progress" style="width: 20%;"></div>
         </div>
         <p class="progress-text">20% completed</p>
-        <a href="pdf/voting_system_v2.pdf" target="_blank">voting system</a>
+        <a href="pdf/voting_system.pdf" target="_blank">research summary (2 pages)</a> &middot;
+        <a href="pdf/voting_system_v2.pdf" target="_blank">technical report</a>
     </div>
 </div>
 
@@ -291,7 +315,8 @@
             <div class="progress" style="width: 80%;"></div> <!-- Adjust width for progress -->
         </div>
         <p class="progress-text">80% completed</p> <!-- Progress text -->
-        <a href="pdf/scheduling_dependent_non_preemptive_tasks.pdf" target="_blank">overall solutions</a>
+        <a href="pdf/scheduling.pdf" target="_blank">research summary (2 pages)</a> &middot;
+        <a href="pdf/scheduling_dependent_non_preemptive_tasks.pdf" target="_blank">full report</a>
     </div>
 </div>
 
@@ -320,7 +345,8 @@
             <div class="progress" style="width: 50%;"></div> <!-- Adjust width for progress -->
         </div>
         <p class="progress-text">50% completed</p> <!-- Progress text -->
-        <a href="pdf/Bayesian_Modeling_for_Defect_Prediction.pdf" target="_blank">Bayesian Modeling for Defect Prediction</a>
+        <a href="pdf/bayesian_defects.pdf" target="_blank">research summary (2 pages)</a> &middot;
+        <a href="pdf/Bayesian_Modeling_for_Defect_Prediction.pdf" target="_blank">v1 report</a>
     </div>
 </div>
 
@@ -333,34 +359,13 @@
             <div class="progress" style="width: 50%;"></div> <!-- Adjust width for progress -->
         </div>
         <p class="progress-text">50% completed</p> <!-- Progress text -->
+        <a href="pdf/viral_video.pdf" target="_blank">research summary (2 pages)</a> &middot;
         <a href="pdf/subtitles_caption.pdf" target="_blank">automatic subtitling</a>
         <a href="pdf/music_video.pdf" target="_blank">background music</a>
         <a href="pdf/api_multiplateform.pdf" target="_blank">cross-platform posting</a>
     </div>
 </div>
 
-
-<!-- Repository: audience interests -->
-<div class="repository">
-    <h2 onclick="toggleContent('repoaudience')">Inferring Audience Interests with BERT for Ad Targeting</h2>
-    <div id="repoaudience" class="content" style="display: none;">
-        <p class="abstract">
-            Advertisers usually target content (what a video is about), not audiences (who actually watches it). This project infers the interests of the audience of a social-media channel from the public comments it receives. Each comment is mapped by a contrastively fine-tuned BERT encoder to a point on the unit sphere, and a channel is represented by the <strong>kernel mean embedding</strong> of its comment distribution.
-        </p>
-        <p class="abstract">
-            Under a topic-mixture model of the audience, this embedding is a linear image of the average interest vector of the audience; its inner product with an advertiser's description equals the expected affinity of a random commenter with the product, which approximates a pointwise mutual information at the contrastive optimum. Its estimator concentrates at a dimension-free rate, and look-alike targeting reduces to a maximum mean discrepancy between audiences.
-        </p>
-        <ul>
-            <li><strong>Data:</strong> 3,154 French YouTube channels, comments only, no individual profiling.</li>
-            <li><strong>Result:</strong> recovers channels already sponsored by a given advertiser with AUC 0.87 (look-alike), an 18&times; lift over random in the top 20.</li>
-        </ul>
-        <div class="progress-bar">
-            <div class="progress" style="width: 50%;"></div>
-        </div>
-        <p class="progress-text">50% completed &middot; 5 clients</p>
-        <a href="pdf/audience_interest_bert.pdf" target="_blank">research summary (2 pages)</a>
-    </div>
-</div>
 
     <!-- Repository final -->
     <div class="repository">

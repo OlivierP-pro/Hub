@@ -1,33 +1,14 @@
 \documentclass[10pt,twocolumn]{article}
-\usepackage[a4paper,margin=1.6cm,columnsep=0.6cm]{geometry}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern,microtype}
-\usepackage{amsmath,amssymb,amsthm,bm}
-\usepackage[hidelinks]{hyperref}
-\usepackage{titlesec}
-\titlespacing*{\section}{0pt}{0.9ex}{0.5ex}
-\titleformat{\section}{\normalfont\bfseries}{\thesection.}{0.4em}{}
-\setlength{\abovedisplayskip}{3pt}\setlength{\belowdisplayskip}{3pt}
-\setlength{\abovedisplayshortskip}{2pt}\setlength{\belowdisplayshortskip}{2pt}
-\setlength{\parskip}{0pt}
-\newtheorem{proposition}{Proposition}
-\newtheorem{definition}{Definition}
-\theoremstyle{remark}\newtheorem*{remark}{Remark}
-\DeclareMathOperator*{\argmin}{arg\,min}
-\newcommand{\E}{\mathbb{E}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\usepackage{hubpaper}
 \newcommand{\Sph}{\mathbb{S}^{d-1}}
 
-\title{\vspace{-1.2cm}\bfseries Inferring Audience Interests from Comment Streams\\ with Transformer Sentence Embeddings:\\ a Kernel Mean Embedding View of Ad Targeting}
-\author{Olivier P.\\{\small Projects-Hub, \today}}
-\date{\vspace{-0.9cm}}
+\hubtitle{Inferring Audience Interests from Comment Streams\\ with Transformer Sentence Embeddings:\\ a Kernel Mean Embedding View of Ad Targeting}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-\noindent We formalise the problem of inferring the interests of the audience of a social-media channel from the public comments it receives, in order to match advertisers with audiences rather than with content. Comments are mapped by a contrastively fine-tuned BERT encoder to the unit sphere; a channel is then represented by the \emph{kernel mean embedding} of its comment distribution. We show that (i) under a topic-mixture model of the audience, this embedding is an affine image of the average interest vector and is identifiable up to a linear map, (ii) its weighted empirical estimator concentrates at rate $\|\bm w\|_2$, (iii) inner products with an advertiser query equal the expected query affinity of a random commenter, which, under the InfoNCE optimum, approximates a pointwise mutual information. Look-alike targeting reduces to a maximum mean discrepancy. On 3\,154 French YouTube channels, ranking by these statistics recovers channels already sponsored by a given advertiser with AUC $0.87$.
+\noindent We formalise the problem of inferring the interests of the audience of a social-media channel from the public comments it receives, in order to match advertisers with audiences rather than with content. Comments are mapped by a contrastively fine-tuned BERT encoder to the unit sphere; a channel is then represented by the \emph{kernel mean embedding} of its comment distribution. We show that (i) under a topic-mixture model of the audience, this embedding is a linear image of the average interest vector, which it identifies when the topic means are linearly independent, (ii) its weighted empirical estimator concentrates at rate $\|\bm w\|_2$, (iii) inner products with an advertiser query equal the expected query affinity of a random commenter, which, under the InfoNCE optimum, approximates a pointwise mutual information. Look-alike targeting reduces to a maximum mean discrepancy. On 3\,154 French YouTube channels, ranking by these statistics recovers channels already sponsored by a given advertiser with AUC $0.87$.
 \end{abstract}
 
 \section{Problem}
@@ -35,9 +16,10 @@ Let $\mathcal C$ be a set of channels and $\mathcal X$ the space of finite token
 
 \section{BERT and sentence embeddings}
 \textbf{Encoder.} A string is tokenised into $t_1,\dots,t_L$ and embedded as $H^{(0)}=E_{\mathrm{tok}}+E_{\mathrm{pos}}\in\R^{L\times d}$. Each of the $N$ layers of a Transformer encoder~\cite{vaswani2017} applies multi-head self-attention,
-\begin{equation}
-\mathrm{Att}(Q,K,V)=\operatorname{softmax}\!\Big(\tfrac{QK^\top}{\sqrt{d_h}}+B\Big)V,\quad Q=HW^Q_j,\;K=HW^K_j,\;V=HW^V_j,
-\end{equation}
+\begin{gather}
+\mathrm{Att}(Q,K,V)=\operatorname{softmax}\!\Big(\frac{QK^\top}{\sqrt{d_h}}+B\Big)V,\\
+Q=HW^Q_j,\quad K=HW^K_j,\quad V=HW^V_j,\notag
+\end{gather}
 ($B$ masks padding), concatenates the $h$ heads, and composes with residual connections, layer normalisation and a position-wise network: $H'=\mathrm{LN}(H+\mathrm{MHA}(H))$, $H^{+}=\mathrm{LN}(H'+W_2\,\mathrm{GELU}(W_1H'))$. Every output vector $h_i^{(N)}$ is thus a context-dependent function of the whole sequence. BERT~\cite{devlin2019} is pre-trained by masked language modelling: for a random subset $M$ ($\approx15\%$) of positions,
 \begin{equation}
 \mathcal L_{\mathrm{MLM}}(\vartheta)=-\E_{x,M}\textstyle\sum_{i\in M}\log p_\vartheta\big(t_i\mid x_{\setminus M}\big),
@@ -77,9 +59,10 @@ By Fubini, $\mu_c=\int\!\sum_k\theta_k m_k\,d\rho_c(\theta)=M\bar\pi_c$; full co
 The score therefore ranks channels by the \emph{average interest of their audience}, weighted by how strongly each topic relates to the product. Only $\bar\pi_c$---not the higher moments of $\rho_c$---is identifiable from $\mu_c$ with a linear kernel; heterogeneity is recovered by the sub-audience decomposition below.
 
 \textbf{Common component and hubness.} All comment laws share a generic component (greetings, ``great video''), so $m_k=g+\tilde m_k$ with a large common $g$ and cosines are tightly concentrated. We therefore use the centred embedding $\mu_c-g$, $g=|\mathcal C|^{-1}\sum_c\mu_c$, and correct hubness~\cite{radovanovic2010} as in CSLS~\cite{conneau2018}: with a set $\mathcal P$ of unrelated probe topics,
-\begin{equation}
-\tilde s(c,q)=\ip{\mu_c}{\psi(q)}-\tfrac1{|\mathcal P|}\textstyle\sum_{p\in\mathcal P}\ip{\mu_c}{\psi(p)}=\ip{\mu_c}{\psi(q)-\bar\psi_{\mathcal P}},
-\end{equation}
+\begin{align}
+\tilde s(c,q)&=\ip{\mu_c}{\psi(q)}-\tfrac1{|\mathcal P|}\textstyle\sum_{p\in\mathcal P}\ip{\mu_c}{\psi(p)}\notag\\
+&=\ip{\mu_c}{\psi(q)-\bar\psi_{\mathcal P}},
+\end{align}
 still linear in $\mu_c$, so Prop.~\ref{prop:id} applies with $a_k(q)$ replaced by its excess over a random topic. Scores are finally standardised across channels ($z$-scores), since only the relative order matters for targeting.
 
 \section{Estimation}

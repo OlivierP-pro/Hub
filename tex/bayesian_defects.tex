@@ -1,0 +1,94 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage{hubpaper}
+\newcommand{\D}{\mathcal D}
+\newcommand{\Pois}{\mathrm{Pois}}
+\hubtitle{Bayesian Poisson Regression for Defect\\ Prediction from Storage Time:\\ Inference, Testing and Risk Bands}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent With about $100$ products, we model the number of defects $Y$ as a function of storage time $X$ by a Bayesian Poisson regression with log link. We prove that the posterior is strictly log-concave, which justifies Laplace and Hamiltonian Monte Carlo inference; we show that the naive quantity $P(\beta_1\neq0\mid\D)$ is identically $1$ under a continuous prior and replace it by directional probabilities, a region of practical equivalence and a Savage--Dickey Bayes factor; we derive Rao--Blackwellised estimators of the probability that a product falls into a defect band, prove that these probabilities are monotone in storage time, and turn them into a maximal storage time at a given risk level. Conditions for a causal reading and model checks (overdispersion, WAIC, LOO) are made explicit.
+\end{abstract}
+
+\section{Model}
+Data are $\D=\{(x_i,y_i)\}_{i=1}^n$, $x_i\ge0$ days, $y_i\in\N$ defects, assumed conditionally independent given the parameters. A generalised linear model~\cite{mccullagh1989} with canonical log link reads
+\begin{equation}
+Y_i\mid x_i,\beta\sim\Pois(\lambda_i),\qquad\eta_i=\log\lambda_i=\beta_0+\beta_1x_i,
+\end{equation}
+so $e^{\beta_1}$ is the multiplicative change in the defect rate per day of storage, and $e^{30\beta_1}$ per month. The prior is $\beta\sim\mathcal N(0,\Sigma_0)$, $\Sigma_0=\mathrm{diag}(\sigma_0^2,\sigma_1^2)$, on standardised $x$ so that $\sigma_1$ has a unit-free meaning (e.g.\ $\sigma_1=1$: a one-standard-deviation increase in storage time is a priori unlikely to multiply the rate by more than $e^2$).
+
+\section{Posterior geometry}
+With $\tilde x_i=(1,x_i)^\top$, Bayes' theorem gives
+\begin{equation}
+\log p(\beta\mid\D)=\sum_{i}\big(y_i\eta_i-e^{\eta_i}\big)-\tfrac12\beta^\top\Sigma_0^{-1}\beta+\mathrm{const}.
+\end{equation}
+\begin{proposition}
+The posterior is strictly log-concave: its Hessian is $-\big(\sum_ie^{\eta_i}\tilde x_i\tilde x_i^\top+\Sigma_0^{-1}\big)\prec0$. Hence it is unimodal, the MAP $\hat\beta$ is unique, and Newton's method converges to it.
+\end{proposition}
+\begin{proof}
+$\partial^2_\beta(y_i\eta_i-e^{\eta_i})=-e^{\eta_i}\tilde x_i\tilde x_i^\top\preceq0$ and $\Sigma_0^{-1}\succ0$.
+\end{proof}
+The Laplace approximation is $\beta\mid\D\approx\mathcal N(\hat\beta,V)$, $V=(\tilde X^\top\hat W\tilde X+\Sigma_0^{-1})^{-1}$, $\hat W=\mathrm{diag}(\hat\lambda_i)$; by Bernstein--von Mises~\cite{vandervaart1998} it is asymptotically exact. For $n\approx100$ we use exact sampling by Hamiltonian Monte Carlo~\cite{neal2011} with the No-U-Turn sampler~\cite{hoffman2014}, whose efficiency on log-concave targets is well understood; convergence is checked with $\hat R$ and effective sample sizes~\cite{gelman2013}.
+
+\textbf{Design.} From $V$, $\mathrm{Var}(\beta_1\mid\D)\approx\big(\sum_i\hat\lambda_i(x_i-\bar x_\lambda)^2\big)^{-1}$, with $\bar x_\lambda$ the $\hat\lambda$-weighted mean of $x$: precision grows with the spread of storage times. Inspecting products with very different storage times is the cheapest way to learn $\beta_1$.
+
+\section{Is there a link?}
+\textbf{A degenerate quantity.} Under any prior with a density, $P(\beta_1=0)=0$, hence $P(\beta_1=0\mid\D)=0$ and $P(\beta_1\neq0\mid\D)=1$ for every data set; a Monte Carlo estimate with a threshold $|\beta_1|>10^{-6}$ returns $1$ up to sampling noise and is uninformative. We use instead:
+
+\emph{(a) Direction:} $P(\beta_1>0\mid\D)\approx\frac1S\sum_s\mathbf 1\{\beta_1^{(s)}>0\}$ from $S$ posterior draws.
+
+\emph{(b) Practical equivalence~\cite{kruschke2018}:} fix $\varepsilon$ such that $|\beta_1|<\varepsilon$ is negligible for the plant (e.g.\ less than $1\%$ rate change per month: $\varepsilon=\ln(1.01)/30$ on the raw scale) and report $P(|\beta_1|<\varepsilon\mid\D)$.
+
+\emph{(c) Bayes factor~\cite{kass1995}} between $M_0:\beta_1=0$ and $M_1$. If the prior of $\beta_0$ under $M_0$ equals the conditional prior of $\beta_0$ given $\beta_1=0$ under $M_1$ (true here, by independence), the Savage--Dickey identity~\cite{dickey1971} gives
+\begin{equation}
+\mathrm{BF}_{01}=\frac{p(\D\mid M_0)}{p(\D\mid M_1)}=\frac{p(\beta_1=0\mid\D,M_1)}{p(\beta_1=0\mid M_1)},
+\end{equation}
+the ratio of posterior to prior density at $0$, estimated by kernel density on the draws or by the Laplace approximation. Unlike (a), it is sensitive to $\sigma_1$, which must be justified.
+
+\textbf{Causality.} $\beta_1$ is an association. It is the causal effect of storage time if storage time is ignorable given covariates $Z$, i.e.\ no common cause of $X$ and $Y$ (product family, supplier, season) is left out; by the back-door criterion~\cite{pearl2009} one then fits $\eta_i=\beta_0+\beta_1x_i+\gamma^\top z_i$. A randomised storage experiment removes the need for this assumption.
+
+\section{Prediction and risk bands}
+The posterior predictive law of a new product stored $\tilde x$ days is
+$p(\tilde y\mid\tilde x,\D)=\int\Pois(\tilde y;e^{\beta_0+\beta_1\tilde x})\,p(\beta\mid\D)\,d\beta$.
+For a band $B=\{a,\dots,b-1\}$ (e.g.\ $Y<5$, $5\le Y<10$, $Y\ge10$) we use the Rao--Blackwellised estimator
+\begin{equation}
+\hat P(\tilde Y\in B\mid\tilde x,\D)=\frac1S\sum_{s=1}^S\sum_{y\in B}\Pois\big(y;\lambda^{(s)}(\tilde x)\big),
+\end{equation}
+which is unbiased for the posterior predictive probability and, by the law of total variance, has variance no larger than that of the estimator based on simulated $\tilde y^{(s)}$; its Monte Carlo error is $O(S_{\mathrm{eff}}^{-1/2})$.
+\begin{proposition}[monotone risk]
+If $P(\beta_1>0\mid\D)=1$, then $\tilde x\mapsto P(\tilde Y\ge k\mid\tilde x,\D)$ is non-decreasing for every $k$.
+\end{proposition}
+\begin{proof}
+$\lambda\mapsto P(\Pois(\lambda)\ge k)$ is non-decreasing (its derivative is $\Pois(k-1;\lambda)\ge0$), and $\tilde x\mapsto\lambda(\tilde x)$ is non-decreasing when $\beta_1>0$; integrate over the posterior.
+\end{proof}
+When $P(\beta_1>0\mid\D)$ is close to but below $1$ the property holds up to a small correction. It yields a decision rule: the maximal storage time at risk level $\alpha$,
+\begin{equation}
+x^*(\alpha)=\sup\{x:\;P(\tilde Y\ge10\mid x,\D)\le\alpha\},
+\end{equation}
+which accounts for parameter uncertainty, unlike a plug-in rule $\lambda(x;\hat\beta)$. If costs $c_d$ per defect and $c_s$ per day are known, the Bayes action minimises $c_d\,\E[\tilde Y\mid x,\D]-c_s\,x$ instead.
+
+\section{Model checking}
+\textbf{Overdispersion.} The Poisson model imposes $\mathrm{Var}(Y\mid x)=\E(Y\mid x)$. We compare the observed dispersion statistic $\sum_i(y_i-\lambda_i)^2/\lambda_i$ with its posterior predictive distribution; if it is too large, we use the Gamma--Poisson (negative binomial) model, $\mathrm{Var}=\lambda+\lambda^2/\kappa$~\cite{gelman2013}.
+
+\textbf{Comparison.} Alternative predictors ($\eta=\beta_0+\beta_1x+\beta_2x^2$, covariates, negative binomial) are compared by WAIC~\cite{watanabe2010},
+$\mathrm{WAIC}=-2\sum_i\log\frac1S\sum_sp(y_i\mid\beta^{(s)})+2\sum_i\mathrm{Var}_s\log p(y_i\mid\beta^{(s)})$,
+and by Pareto-smoothed leave-one-out cross-validation~\cite{vehtari2017}, whose diagnostics also flag influential products. \textbf{Prior sensitivity} is assessed by refitting with $\sigma_1\in\{0.5,1,10\}$: (a) and (b) should be stable, (c) will not be.
+
+\section{Status}
+Model, inference, tests and decision rule are specified, with pseudo-code for posterior sampling and predictive bands; next is the implementation on plant data, with covariates and overdispersion checks.
+
+\footnotesize
+\begin{thebibliography}{99}\setlength{\itemsep}{0pt}
+\bibitem{dickey1971} J.~Dickey. The weighted likelihood ratio, linear hypotheses on normal location parameters. \emph{Ann.\ Math.\ Stat.} 42(1):204--223, 1971.
+\bibitem{gelman2013} A.~Gelman, J.~Carlin, H.~Stern, D.~Dunson, A.~Vehtari, D.~Rubin. \emph{Bayesian Data Analysis}, 3rd ed. CRC Press, 2013.
+\bibitem{hoffman2014} M.~Hoffman, A.~Gelman. The No-U-Turn sampler. \emph{JMLR} 15:1593--1623, 2014.
+\bibitem{kass1995} R.~Kass, A.~Raftery. Bayes factors. \emph{JASA} 90(430):773--795, 1995.
+\bibitem{kruschke2018} J.~Kruschke. Rejecting or accepting parameter values in Bayesian estimation. \emph{Adv.\ Methods Pract.\ Psychol.\ Sci.} 1(2):270--280, 2018.
+\bibitem{mccullagh1989} P.~McCullagh, J.~Nelder. \emph{Generalized Linear Models}, 2nd ed. Chapman \& Hall, 1989.
+\bibitem{neal2011} R.~Neal. MCMC using Hamiltonian dynamics. In \emph{Handbook of Markov Chain Monte Carlo}, CRC Press, 2011.
+\bibitem{pearl2009} J.~Pearl. \emph{Causality}, 2nd ed. Cambridge Univ.\ Press, 2009.
+\bibitem{vandervaart1998} A.~van der Vaart. \emph{Asymptotic Statistics}. Cambridge Univ.\ Press, 1998.
+\bibitem{vehtari2017} A.~Vehtari, A.~Gelman, J.~Gabry. Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. \emph{Stat.\ Comput.} 27:1413--1432, 2017.
+\bibitem{watanabe2010} S.~Watanabe. Asymptotic equivalence of Bayes cross validation and widely applicable information criterion. \emph{JMLR} 11:3571--3594, 2010.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,27 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hubpaper}
+\RequirePackage[a4paper,margin=1.6cm,columnsep=0.6cm]{geometry}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern,microtype}
+\RequirePackage{amsmath,amssymb,amsthm,bm}
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{titlesec}
+\titlespacing*{\section}{0pt}{0.9ex}{0.5ex}
+\titleformat{\section}{\normalfont\bfseries}{\thesection.}{0.4em}{}
+\setlength{\abovedisplayskip}{3pt}\setlength{\belowdisplayskip}{3pt}
+\setlength{\abovedisplayshortskip}{2pt}\setlength{\belowdisplayshortskip}{2pt}
+\setlength{\parskip}{0pt}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}\newtheorem*{remark}{Remark}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\newcommand{\hubtitle}[1]{\title{\vspace{-1.2cm}\bfseries #1}\author{Olivier P.}\date{\vspace{-0.9cm}}}
+\endinput

@@ -1,0 +1,93 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage{hubpaper}
+\hubtitle{The log S-fBM Model:\\ a Stationary Bridge between Rough\\ and Multifractal Volatility}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent Empirical volatility is \emph{rough}: its logarithm behaves like a fractional Brownian motion with Hurst exponent $H\approx0.1$ or smaller. Multifractal random measures (MRM) describe the limit $H\to0$ but have no roughness parameter. The log stationary fractional Brownian motion (log S-fBM) contains both. We state its construction, prove that its covariance is admissible, show that it converges to the log-normal MRM as $H\to0$ at fixed intermittency, derive exact second-order moments of the integrated variance and of its logarithm, and explain why a generalised method of moments (GMM) built on these moments avoids the upward bias of scaling-based estimators of $H$.
+\end{abstract}
+
+\section{Rough and multifractal volatility}
+Let $S_t$ be a price with $d\ln S_t=\sigma_t\,dW_t$. Two empirical facts dominate high-frequency data: (i) $\E|\ln\sigma_{t+\tau}-\ln\sigma_t|^q\propto\tau^{qH}$ with $H\ll1/2$~\cite{gatheral2018}, which motivates rough fractional stochastic volatility (RFSV); (ii) the moments of the integrated variance scale non-linearly, $\E\big[(\int_t^{t+\tau}\sigma_s^2ds)^q\big]\propto\tau^{\zeta(q)}$ with concave $\zeta$, which motivates the MRM of Bacry, Delour and Muzy~\cite{bacry2001}, a Gaussian multiplicative chaos~\cite{kahane1985} with logarithmic covariance. RFSV has no multifractality, MRM has no roughness parameter; log S-fBM~\cite{wu2022} unifies them.
+
+\section{The S-fBM process}
+\begin{definition}
+Let $H\in(0,\tfrac12)$, $T>0$, $\lambda>0$ and $\nu^2=\lambda^2/(H(1-2H))$. The S-fBM $\omega_{H,T}$ is the stationary Gaussian process with mean $m$ and covariance
+\begin{equation}\label{eq:rho}
+\rho(\tau)=\tfrac{\nu^2}{2}\big(T^{2H}-|\tau|^{2H}\big)_+ .
+\end{equation}
+\end{definition}
+\begin{lemma}[admissibility]
+$\rho$ is positive definite on $\R$ for every $H\in(0,\tfrac12]$.
+\end{lemma}
+\begin{proof}
+$\rho$ is even, continuous, non-increasing on $[0,\infty)$, tends to $0$, and is convex on $(0,\infty)$: on $(0,T)$, $-|\tau|^{2H}$ is convex because $2H\le1$, and at $\tau=T$ the derivative jumps from $-\nu^2HT^{2H-1}<0$ to $0$, which preserves convexity. By P\'olya's criterion~\cite{polya1949}, $\rho/\rho(0)$ is a characteristic function, hence positive definite (Bochner).
+\end{proof}
+The correlation vanishes beyond the \emph{decorrelation scale} $T$, and for $|\tau|\ll T$,
+$\E(\omega(t+\tau)-\omega(t))^2=2(\rho(0)-\rho(\tau))=\nu^2|\tau|^{2H}$: increments are those of an fBM~\cite{mandelbrot1968}, so paths are $\alpha$-H\"older for every $\alpha<H$ (Kolmogorov--Chentsov). $H$ thus controls roughness, $T$ memory, and $\lambda^2$ intermittency.
+
+\textbf{Normalisation.} Choosing $m=-\tfrac12\rho(0)=-\tfrac{\nu^2}{4}T^{2H}$ gives, by the Gaussian moment generating function, $\E e^{\omega(t)}=e^{m+\rho(0)/2}=1$.
+
+\section{The log S-fBM measure and its MRM limit}
+\begin{definition}
+The log S-fBM random measure is $M_{H,T}(dt)=\sigma^2e^{\omega_{H,T}(t)}dt$; for $I\subset\R$, $M_{H,T}(I)=\sigma^2\!\int_Ie^{\omega_{H,T}(t)}dt$.
+\end{definition}
+By Fubini and the normalisation, $\E M_{H,T}(I)=\sigma^2|I|$: $\sigma^2$ is the mean variance per unit time, and $M_{H,T}$ is the model of integrated variance $\int_I\sigma_s^2ds$.
+
+\textbf{Limit $H\to0$.} With $\lambda$ fixed, $\nu^2\to\infty$, $m\to-\infty$, but for $0<\tau<T$
+\begin{equation}
+\rho(\tau)=\lambda^2\,\frac{T^{2H}-\tau^{2H}}{2H(1-2H)}\xrightarrow[H\to0]{}\lambda^2\ln\frac{T}{\tau},
+\end{equation}
+since $(T^{2H}-\tau^{2H})/2H\to\ln(T/\tau)$. This is exactly the logarithmic covariance of the log-normal MRM. Wu, Muzy and Bacry~\cite{wu2022} show that $M_{H,T}\Rightarrow M_{0,T}$ weakly, the MRM being defined as a limit of exponentials of regularised log-correlated fields~\cite{kahane1985,bacry2001}. The limit is non-degenerate iff $\lambda^2<2$, and for $q$ with $\zeta(q)>1$,
+\begin{equation}
+\E\big[M_{0,T}([0,\tau])^q\big]=K_q\,\tau^{\zeta(q)},\quad \zeta(q)=q-\tfrac{\lambda^2}{2}q(q-1),
+\end{equation}
+$\tau\le T$: the scaling is \emph{exactly} multifractal (concave $\zeta$), whereas for $H>0$ it is only approximately so on scales $\tau\gg T e^{-1/(2H)}$. $H$ therefore acts as a regulariser that breaks exact scale invariance while keeping stationarity.
+
+\section{Second-order moments}
+Let $M_\Delta(t)=M_{H,T}([t,t+\Delta])$ be the integrated variance over a sampling period $\Delta$, and $C_M(\Delta,\tau)=\E[M_\Delta(t)M_\Delta(t+\tau)]$.
+\begin{proposition}
+Let $F$ solve $F''(z)=\sigma^4e^{\rho(z)}$, $F(0)=F'(0)=0$. Then
+\begin{equation}\label{eq:CM}
+C_M(\Delta,\tau)=F(\tau+\Delta)+F(|\tau-\Delta|)-2F(\tau).
+\end{equation}
+\end{proposition}
+\begin{proof}
+Since $\E e^{\omega(u)+\omega(v)}=e^{2m+\rho(0)+\rho(u-v)}=e^{\rho(u-v)}$,
+$C_M=\sigma^4\!\int_0^\Delta\!\!\int_0^\Delta e^{\rho(\tau+u-v)}du\,dv=\int_{-\Delta}^{\Delta}(\Delta-|s|)F''(\tau+s)\,ds$, and two integrations by parts give \eqref{eq:CM} ($F''$ is even, $F$ is extended as an even function).
+\end{proof}
+For $H=0$ and $z\le T$, $e^{\rho(z)}=(T/z)^{\lambda^2}$, so $F(z)=\sigma^4T^{\lambda^2}z^{2-\lambda^2}/\big((2-\lambda^2)(1-\lambda^2)\big)$; for $H>0$, $F$ is expressed with lower incomplete gamma functions~\cite{wu2022}. For $\tau\ge T+\Delta$, independence gives $C_M=\sigma^4\Delta^2$.
+
+\textbf{Log-variance.} For small intermittency, $\ln M_\Delta(t)\approx\ln(\sigma^2\Delta)+m+\frac1\Delta\int_t^{t+\Delta}\omega$, hence, with $G''=\rho$, $G(0)=G'(0)=0$, the same computation yields
+\begin{equation}
+C_{\ln M}(\Delta,\tau)\approx\frac{G(\tau+\Delta)+G(|\tau-\Delta|)-2G(\tau)}{\Delta^2},
+\end{equation}
+where, for $z\le T$, $G(z)=\frac{\nu^2}{2}\big(\frac{T^{2H}z^2}{2}-\frac{z^{2H+2}}{(2H+1)(2H+2)}\big)$. For $\Delta\to0$ this reduces to $\rho(\tau)$: the RFSV structure is recovered at high frequency.
+
+\section{Estimation}
+\textbf{Bias of scaling estimators.} The usual estimator regresses $\ln m(q,\tau)$, $m(q,\tau)=\E|\ln M_\Delta(t+\tau)-\ln M_\Delta(t)|^q$, on $\ln\tau$. Under log S-fBM, $\ln m(q,\tau)\approx qH\ln\tau+\frac q2\ln g_H(\Delta/\tau)$, where $g_H$ accounts for the averaging over $[t,t+\Delta]$. The second term is not constant in $\tau$, so the slope is biased upward; in our simulations a true $H=0.002$ was estimated at $0.082$. Data that are in fact multifractal can therefore look ``rough''.
+
+\textbf{GMM.} Let $\theta=(H,\lambda^2,T,\sigma^2)$ and observe $M_\Delta(j\Delta)$, $j=1,\dots,N$, $L=N\Delta$. Stack empirical moments $\widehat C_M(\Delta,k\Delta)=\frac1{N-k}\sum_jM_\Delta(j\Delta)M_\Delta((j+k)\Delta)$ and $\widehat C_{\ln M}(\Delta,k\Delta)$ for $k\in\mathcal K$ into $\hat{\bm c}$, and set
+\begin{equation}
+\hat\theta=\argmin_\theta\big(\hat{\bm c}-\bm c(\theta)\big)^\top W\big(\hat{\bm c}-\bm c(\theta)\big).
+\end{equation}
+Under ergodicity and identifiability, $\hat\theta$ is consistent and asymptotically normal, efficient for $W$ the inverse long-run covariance of the moments~\cite{hansen1982}. Two regimes matter: in the \emph{low-frequency} regime $\Delta<T\ll L$, all four parameters are identifiable; in the \emph{high-frequency} regime $\Delta\ll L=O(T)$, typical of daily data over a few years, $T$ and $\sigma^2$ are entangled (only $\sigma^2$ times a function of $T$ is seen), but $H$ and $\lambda^2$ remain identifiable, so no unrealistic ergodicity in $T$ is needed.
+
+\textbf{Simulation.} Exact simulation on $n$ points by Cholesky costs $O(n^3)$; since $\rho$ has compact support, circulant embedding~\cite{woodchan1994} costs $O(n\log n)$ by FFT, provided the eigenvalues of the embedding circulant are non-negative, which we check numerically. Monte-Carlo moments agree with \eqref{eq:CM}, and the convergence to MRM scaling is visible for $H\le0.05$.
+
+\section{Status}
+Implemented: simulation, the MRM limit, $C_M$ and $C_{\ln M}$ validated against Monte-Carlo, bias of the scaling estimator. Next: full GMM calibration on daily realised volatility of individual stocks and indices, to decide whether data are best described by $H>0$ (RFSV) or $H=0$ (MRM).
+
+\footnotesize
+\begin{thebibliography}{99}\setlength{\itemsep}{0pt}
+\bibitem{bacry2001} E.~Bacry, J.~Delour, J.-F.~Muzy. Multifractal random walk. \emph{Phys.\ Rev.\ E} 64, 026103, 2001.
+\bibitem{gatheral2018} J.~Gatheral, T.~Jaisson, M.~Rosenbaum. Volatility is rough. \emph{Quantitative Finance} 18(6):933--949, 2018.
+\bibitem{hansen1982} L.~P.~Hansen. Large sample properties of generalized method of moments estimators. \emph{Econometrica} 50(4):1029--1054, 1982.
+\bibitem{kahane1985} J.-P.~Kahane. Sur le chaos multiplicatif. \emph{Ann.\ Sci.\ Math.\ Qu\'ebec} 9(2):105--150, 1985.
+\bibitem{mandelbrot1968} B.~Mandelbrot, J.~Van Ness. Fractional Brownian motions, fractional noises and applications. \emph{SIAM Review} 10(4):422--437, 1968.
+\bibitem{polya1949} G.~P\'olya. Remarks on characteristic functions. \emph{Proc.\ 1st Berkeley Symp.\ Math.\ Stat.\ Prob.}, 115--123, 1949.
+\bibitem{woodchan1994} A.~Wood, G.~Chan. Simulation of stationary Gaussian processes in $[0,1]^d$. \emph{J.\ Comput.\ Graph.\ Stat.} 3(4):409--432, 1994.
+\bibitem{wu2022} P.~Wu, J.-F.~Muzy, E.~Bacry. From rough to multifractal volatility: the log S-fBM model. \emph{Physica A}, 2022.
+\end{thebibliography}
+\end{document}

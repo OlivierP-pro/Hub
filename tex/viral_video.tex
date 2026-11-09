@@ -1,0 +1,70 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage{hubpaper}
+\hubtitle{An Automated Pipeline for Short-Form Video:\\ Speech Recognition, Word-Synchronous Captions,\\ Conditional Music Generation and Distribution}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent We describe the mathematics behind a pipeline that turns a raw video into a captioned, scored video published on YouTube, TikTok and Instagram. Speech is transcribed by Whisper, an encoder--decoder Transformer on log-Mel spectrograms; word timestamps are obtained by dynamic time warping on cross-attention; captions are formed by an optimal segmentation of the word sequence and highlighted word by word with drift-free rounding. Background music is sampled from MusicGen, an autoregressive Transformer over residual-vector-quantised audio codes with classifier-free guidance, conditioned on a prompt extracted from the transcript, and mixed at a target loudness. Distribution is a scheduling problem under API quotas.
+\end{abstract}
+
+\section{Speech to text}
+\textbf{Features.} The audio $x[n]$ is resampled to $16$\,kHz; its short-time Fourier transform with a $25$\,ms window $w$ and a $10$\,ms hop $h$,
+$X(t,f)=\sum_nx[n]\,w[n-th]\,e^{-2\pi ifn/N}$,
+is projected on $80$ triangular filters $\Phi_k$ equally spaced on the Mel scale $\mathrm{mel}(f)=2595\log_{10}(1+f/700)$~\cite{stevens1937}, giving $S(t,k)=\log\big(\sum_f\Phi_k(f)|X(t,f)|^2+\epsilon\big)$.
+
+\textbf{Model.} Whisper~\cite{radford2023} is a Transformer encoder--decoder~\cite{vaswani2017}: the encoder maps $30$\,s windows of $S$ to states $E$, the decoder defines $p_\theta(y_u\mid y_{<u},E)$ over text tokens, including special tokens for language, task (transcribe/translate) and time. It was trained by cross-entropy on $680{,}000$ hours of weakly supervised audio, which explains its robustness across accents and languages. Decoding approximates $\argmax_yp_\theta(y\mid S)$ by beam search, with temperature fallback when the log-probability or the compression ratio of the output signals a failure.
+
+\textbf{Word timestamps.} Let $A\in\R^{U\times F}$ be the cross-attention of selected heads between the $U$ output tokens and the $F$ audio frames (normalised per row). Since speech and text are both ordered in time, we seek a monotone path $\gamma=((u_\ell,f_\ell))_\ell$ from $(1,1)$ to $(U,F)$ with steps in $\{(1,0),(0,1),(1,1)\}$ minimising $\sum_\ell-A_{u_\ell f_\ell}$. Dynamic time warping~\cite{sakoe1978} solves it exactly in $O(UF)$:
+\begin{multline}
+D(u,f)=-A_{uf}\\+\min\{D(u{-}1,f),\,D(u,f{-}1),\,D(u{-}1,f{-}1)\}.
+\end{multline}
+The first and last frames matched to the tokens of a word give its interval $[s_i,e_i]$.
+
+\section{Captions}
+\textbf{Segmentation.} Given words $w_1,\dots,w_n$ with intervals $[s_i,e_i]$, we formalise the grouping of words into captions: a caption is a block $w_{a..b}$ of consecutive words; it is admissible if its length is at most $L$ characters, its duration $e_b-s_a$ at most $\tau_{\max}$ and no pause inside exceeds $\delta$. For the cost $c(a,b)=1+\kappa\,(L-\mathrm{len}(w_{a..b}))^2$, which favours few, well-filled captions, the optimal segmentation is computed by
+\begin{equation}
+V(b)=\min_{a\le b,\;w_{a..b}\text{ admissible}}V(a-1)+c(a,b),\quad V(0)=0,
+\end{equation}
+in $O(nK)$ where $K$ is the maximal number of words per caption; Bellman's principle gives optimality, as for line breaking. Captions are centred on screen, where the eye rests in vertical video.
+
+\textbf{Word highlighting.} In the ASS format, a karaoke tag \verb|\k|$d_i$ highlights word $i$ for $d_i$ centiseconds. Rounding each duration independently, $d_i=\mathrm{round}(100(e_i-s_i))$, accumulates an error up to $n/2$ cs over $n$ words. Cumulative rounding, $d_i=\mathrm{round}(100e_i)-\mathrm{round}(100s_1)-\sum_{j<i}d_j$ (gaps included), keeps the end of every word within $0.5$\,cs of its true time, whatever $n$.
+
+\section{Music generation}
+\textbf{Audio tokens.} EnCodec~\cite{defossez2023} encodes a $32$\,kHz waveform into latent vectors $z_t$ at $50$\,Hz, quantised by residual vector quantisation~\cite{zeghidour2021}: $r_0=z_t$, $q_{t,k}=\argmin_{c\in\mathcal C_k}\|r_{k-1}-c\|$, $r_k=r_{k-1}-q_{t,k}$, $k=1,\dots,K$, with $K=4$ codebooks of size $2048$; each stage quantises the residual of the previous ones, so the error decreases with $k$.
+
+\textbf{Language model.} MusicGen~\cite{copet2023} models the $K$ parallel streams with a single Transformer using a \emph{delay} pattern: stream $k$ is shifted by $k-1$ steps, so that at step $t$ the model predicts $(q_{t,1},q_{t-1,2},\dots,q_{t-K+1,K})$, each conditionally on all previous steps and on the text through cross-attention to a T5 encoding~\cite{raffel2020} of the prompt. The factorisation $\prod_t\prod_kp(q_{t-k+1,k}\mid\text{past},\text{text})$ treats the $K$ codes of a step as conditionally independent given the past, the price paid for one forward pass per $20$\,ms of audio.
+
+\textbf{Sampling.} With conditional and unconditional logits $\ell_c,\ell_u$, classifier-free guidance~\cite{ho2022} samples from
+\begin{equation}
+\ell=\ell_u+\gamma(\ell_c-\ell_u),\quad p(v)\propto\exp(\ell_v/T),
+\end{equation}
+i.e.\ $p\propto p_u^{1-\gamma}p_c^{\gamma}$ at $T=1$, which sharpens adherence to the prompt for $\gamma>1$. Top-$k$ keeps the $k$ most likely codes; nucleus sampling~\cite{holtzman2020} keeps the smallest set $V_p$ with $\sum_{v\in V_p}p(v)\ge p$. Both trade diversity against artefacts.
+
+\textbf{Prompt and adaptation.} The prompt is built from the first sentence of the transcript, so the music follows the theme of the video. A lighter model can be fine-tuned by cross-entropy on the token sequences of MAESTRO~\cite{hawthorne2019} (about $200$ hours of piano), giving royalty-free music specialised to a style at lower cost.
+
+\textbf{Mixing.} Speech $s$ and music $m$ are mixed as $y=s+g\,m$. Integrated loudness~\cite{itu1770} is $L=-0.691+10\log_{10}$ of the gated mean square of the K-weighted signal, so scaling by $g$ shifts it by $20\log_{10}g$ dB. Choosing $g=10^{(L_s-\Delta-L_m)/20}$ places the music $\Delta$ dB (typically $15$--$20$) below the speech.
+
+\section{Distribution}
+Each platform exposes an upload API authorised by OAuth~2.0~\cite{rfc6749}. A batch of $V$ videos is assigned to slots $t$ on platforms $j$ by $x_{vjt}\in\{0,1\}$, maximising $\sum x_{vjt}\,r_{jt}$, where $r_{jt}$ is the expected early engagement of slot $t$ on platform $j$, subject to one post per video and platform, $\sum_{v}x_{vjt}\le1$ per slot, and the quota $\sum_{v,t\in\text{day}}c_jx_{vjt}\le Q_j$ ($c_j$ units per upload out of a daily budget $Q_j$). This is an assignment problem with knapsack side constraints, solved greedily or by integer programming; the engagement rates $r_{jt}$ are estimated from past posts.
+
+\section{Status}
+Implemented: Whisper transcription with word timestamps, centred word-highlighted ASS captions, MusicGen generation and FFmpeg mixing, uploads through the three APIs. Next: the optimal caption segmentation and drift-free rounding above, loudness-targeted mixing, the posting schedule and the fine-tuned music model.
+
+\footnotesize
+\begin{thebibliography}{99}\setlength{\itemsep}{0pt}
+\bibitem{copet2023} J.~Copet et al. Simple and controllable music generation. \emph{NeurIPS}, 2023.
+\bibitem{defossez2023} A.~D\'efossez, J.~Copet, G.~Synnaeve, Y.~Adi. High fidelity neural audio compression. \emph{TMLR}, 2023.
+\bibitem{hawthorne2019} C.~Hawthorne et al. Enabling factorized piano music modeling and generation with the MAESTRO dataset. \emph{ICLR}, 2019.
+\bibitem{ho2022} J.~Ho, T.~Salimans. Classifier-free diffusion guidance. arXiv:2207.12598, 2022.
+\bibitem{holtzman2020} A.~Holtzman, J.~Buys, L.~Du, M.~Forbes, Y.~Choi. The curious case of neural text degeneration. \emph{ICLR}, 2020.
+\bibitem{itu1770} ITU-R Rec.\ BS.1770. Algorithms to measure audio programme loudness and true-peak audio level.
+\bibitem{radford2023} A.~Radford, J.~W.~Kim, T.~Xu, G.~Brockman, C.~McLeavey, I.~Sutskever. Robust speech recognition via large-scale weak supervision. \emph{ICML}, 2023.
+\bibitem{raffel2020} C.~Raffel et al. Exploring the limits of transfer learning with a unified text-to-text Transformer. \emph{JMLR} 21:1--67, 2020.
+\bibitem{rfc6749} D.~Hardt. The OAuth 2.0 authorization framework. RFC 6749, IETF, 2012.
+\bibitem{sakoe1978} H.~Sakoe, S.~Chiba. Dynamic programming algorithm optimization for spoken word recognition. \emph{IEEE Trans.\ ASSP} 26(1):43--49, 1978.
+\bibitem{stevens1937} S.~Stevens, J.~Volkmann, E.~Newman. A scale for the measurement of the psychological magnitude pitch. \emph{J.\ Acoust.\ Soc.\ Am.} 8(3):185--190, 1937.
+\bibitem{vaswani2017} A.~Vaswani et al. Attention is all you need. \emph{NeurIPS}, 2017.
+\bibitem{zeghidour2021} N.~Zeghidour, A.~Luebs, A.~Omran, J.~Skoglund, M.~Tagliasacchi. SoundStream: an end-to-end neural audio codec. \emph{IEEE/ACM TASLP} 30:495--507, 2021.
+\end{thebibliography}
+\end{document}
