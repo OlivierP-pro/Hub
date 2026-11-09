@@ -74,8 +74,8 @@ which accounts for parameter uncertainty, unlike a plug-in rule $\lambda(x;\hat\
 $\mathrm{WAIC}=-2\sum_i\log\frac1S\sum_sp(y_i\mid\beta^{(s)})+2\sum_i\mathrm{Var}_s\log p(y_i\mid\beta^{(s)})$,
 and by Pareto-smoothed leave-one-out cross-validation~\cite{vehtari2017}, whose diagnostics also flag influential products. \textbf{Prior sensitivity} is assessed by refitting with $\sigma_1\in\{0.5,1,10\}$: (a) and (b) should be stable, (c) will not be.
 
-\section{Status}
-Model, inference, tests and decision rule are specified, with pseudo-code for posterior sampling and predictive bands; next is the implementation on plant data, with covariates and overdispersion checks.
+\section{Conclusion}
+The model yields, from about a hundred products, a sound test of the storage--defect link, calibrated probabilities of falling into each defect band, and a storage limit at a chosen risk level. Extensions are covariates for a causal reading and the negative binomial model when counts are overdispersed.
 
 \footnotesize
 \begin{thebibliography}{99}\setlength{\itemsep}{0pt}

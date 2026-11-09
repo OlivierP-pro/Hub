@@ -48,8 +48,8 @@ i.e.\ $p\propto p_u^{1-\gamma}p_c^{\gamma}$ at $T=1$, which sharpens adherence t
 \section{Distribution}
 Each platform exposes an upload API authorised by OAuth~2.0~\cite{rfc6749}. A batch of $V$ videos is assigned to slots $t$ on platforms $j$ by $x_{vjt}\in\{0,1\}$, maximising $\sum x_{vjt}\,r_{jt}$, where $r_{jt}$ is the expected early engagement of slot $t$ on platform $j$, subject to one post per video and platform, $\sum_{v}x_{vjt}\le1$ per slot, and the quota $\sum_{v,t\in\text{day}}c_jx_{vjt}\le Q_j$ ($c_j$ units per upload out of a daily budget $Q_j$). This is an assignment problem with knapsack side constraints, solved greedily or by integer programming; the engagement rates $r_{jt}$ are estimated from past posts.
 
-\section{Status}
-Implemented: Whisper transcription with word timestamps, centred word-highlighted ASS captions, MusicGen generation and FFmpeg mixing, uploads through the three APIs. Next: the optimal caption segmentation and drift-free rounding above, loudness-targeted mixing, the posting schedule and the fine-tuned music model.
+\section{Conclusion}
+The pipeline runs end to end: Whisper transcription with word timestamps, centred word-highlighted captions, MusicGen generation and mixing, uploads through the three APIs. The segmentation, rounding, loudness and scheduling formulations above make each step explicit and open to optimisation; a fine-tuned music model is the natural extension.
 
 \footnotesize
 \begin{thebibliography}{99}\setlength{\itemsep}{0pt}

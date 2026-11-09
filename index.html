@@ -1,449 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>my Projects</title>
-    <style>
-        /* Global Styles */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-            line-height: 1.6;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olivier P. — Research Projects</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Serif/cmun-serif.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Typewriter/cmun-typewriter.css">
+<style>
+  :root {
+    --text: #111;
+    --muted: #555;
+    --rule: #d6d6d6;
+    --accent: #1a365d;
+    --track: #e6e6e6;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: #fff;
+    color: var(--text);
+    font-family: "Computer Modern Serif", "Latin Modern Roman", "CMU Serif", Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.55;
+    text-rendering: optimizeLegibility;
+  }
+  main { max-width: 780px; margin: 0 auto; padding: 3.5rem 1rem 4rem; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
 
-        h1, h2 {
-            color: #333;
-        }
+  /* Title block */
+  .title { text-align: center; margin-bottom: 2.2rem; }
+  .title h1 { font-size: 2rem; font-weight: normal; margin: 0 0 .6rem; letter-spacing: .01em; }
+  .title .affil { margin: 0; }
+  .title .email { margin: .3rem 0 0; font-family: "Computer Modern Typewriter", "Courier New", monospace; font-size: .95em; }
 
-        a {
-            color: #007BFF;
-            text-decoration: none;
-        }
+  /* Abstracts */
+  .abstract { margin: 0 2.5rem 2.4rem; font-size: .95em; text-align: justify; hyphens: auto; }
+  .abstract h2 { font-size: 1em; text-align: center; margin: 0 0 .4rem; font-variant: small-caps; letter-spacing: .04em; }
+  .abstract p { margin: 0; }
 
-        a:hover {
-            text-decoration: underline;
-        }
+  /* Sections */
+  h2.section { font-size: 1.3rem; margin: 2.4rem 0 .8rem; }
+  h2.section .num { display: inline-block; min-width: 1.8em; }
+  ul.facts { list-style: none; padding: 0; margin: 0; }
+  ul.facts > li { margin: 0 0 .35rem; }
+  details { margin: .2rem 0 .5rem; }
+  details summary { cursor: pointer; font-weight: bold; }
+  details ul { margin: .4rem 0 0; padding-left: 1.3rem; font-size: .95em; }
+  details ul ul { margin: .15rem 0 .4rem; }
+  details li { margin-bottom: .2rem; }
 
-        /* Header */
-        header {
-            background-color: #007BFF;
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-        }
+  /* Projects */
+  article { padding: 1.3rem 0 1.4rem; border-top: 1px solid var(--rule); }
+  article:first-of-type { border-top: 0; padding-top: .3rem; }
+  article h3 { font-size: 1.1rem; margin: 0 0 .45rem; line-height: 1.35; }
+  article h3 .num { display: inline-block; min-width: 2.4em; font-weight: bold; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .9rem; font-size: .9em; color: var(--muted); margin-bottom: .7rem; }
+  .bar { width: 120px; height: 4px; background: var(--track); border-radius: 2px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--accent); }
+  .meta a { font-weight: bold; }
+  article p { margin: 0 0 .5rem; text-align: justify; hyphens: auto; }
+  .keywords { font-size: .9em; color: var(--muted); }
+  .keywords em { font-style: italic; color: var(--text); }
 
-        header h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-
-        /* Introduction */
-        .introduction {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .introduction p {
-            font-size: 1.1em;
-            text-align: justify;
-        }
-
-        /* CV Highlights */
-        .cv-highlights {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .cv-highlights ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .cv-highlights li {
-            margin-bottom: 10px;
-        }
-
-        .cv-highlights strong {
-            color: #007BFF;
-        }
-
-        /* Repository Section */
-        .repository {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .repository h2 {
-            cursor: pointer;
-            color: #007BFF;
-            transition: color 0.3s ease;
-        }
-
-        .repository h2:hover {
-            color: #0056b3;
-        }
-
-        .content {
-            display: none;
-            margin-top: 10px;
-        }
-
-        .abstract {
-            font-size: 1em;
-            text-align: justify;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-
-        .progress {
-            height: 100%;
-            background-color: #007BFF;
-            border-radius: 5px;
-        }
-
-        .progress-text {
-            font-size: 0.9em;
-            color: #666;
-        }
-        /* Classe simple-repository */
-        .simple-repository {
-            margin-bottom: 15px; /* Espacement entre les sections */
-        }
-
-        .simple-repository h2 {
-            font-size: 1.1em; /* Taille modérée pour le titre */
-            margin: 0;
-            padding: 5px 0; /* Réduit le padding */
-            cursor: pointer;
-            color: #007BFF; /* Couleur bleue pour indiquer l'interactivité */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .simple-repository h2:hover {
-            text-decoration: underline; /* Effet visuel au survol */
-        }
-
-        .simple-repository h2 span {
-            font-size: 0.8em; /* Icône ▼ plus petite */
-            color: #007BFF;
-        }
-
-        .simple-repository .content {
-            display: none; /* Contenu masqué par défaut */
-            padding-left: 10px; /* Indentation légère pour le contenu */
-        }
-
-        .simple-repository ul {
-            list-style-type: disc; /* Style de liste standard */
-            padding-left: 20px; /* Indentation des puces */
-        }
-
-        .simple-repository li {
-            margin-bottom: 5px; /* Espacement entre les éléments de liste */
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    main { padding-top: 2rem; }
+    .abstract { margin: 0 0 2rem; }
+    .title h1 { font-size: 1.6rem; }
+  }
+</style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <h1>Welcome to Projects-Hub</h1>
-    </header>
+<main>
 
-    <!-- Introduction -->
-    <div class="introduction">
-        <p>
-            This website serves as a comprehensive collection of my projects and contributions. 
-            My work is mainly on Operational Research: Mathematical Aspects and Applications, focusing on optimization techniques and their real-world use cases.
-        </p>
-    </div>
+<header class="title">
+  <h1>Olivier P.</h1>
+  <p class="affil">MSc in Mathematical Modelling (Probability &amp; PDE)<br>Sorbonne Université &amp; École Polytechnique, Paris</p>
+  <p class="email">olivier.p.etude@gmail.com</p>
+</header>
 
-    <!-- CV Highlights -->
-<div class="cv-highlights">
-    <h2>About Me</h2>
-    <ul>
-        <li><strong>Education:</strong> BSc in Mathematics and BSc in Statistical Physics, Université Savoie Mont-Blanc, Chambéry (2023).</li>
-        <li><strong>Current Position:</strong> MSc (M2) in Mathematical Modelling, specializing in Probability and PDE, Sorbonne Université &amp; École Polytechnique, Paris (2023–2026). Available from January 2027.</li>
-        <li><strong>Research Interests:</strong> Rough volatility in statistical finance, operational research, stochastic calculus, Bayesian statistics, data analysis, and optimization techniques.</li>
-    <div class="simple-repository">
-        <h2 onclick="toggleContent('experience')">
-            Professional Experience 
-            <span style="float: right; font-size: 0.8em; color: #007BFF; cursor: pointer;">▼</span>
-        </h2>
-        <div id="experience" class="content" style="display: none;">
-            <ul>
-                <li><strong>2026: R&amp;D Stochastic Modelling Intern, Parrot Drones (Paris).</strong>
-                    <ul>
-                        <li>Multi-sensor flight-log processing (IMU, GPS, barometer): time synchronisation, resampling, missing values, spectral analysis (FFT, power spectral density).</li>
-                        <li>State estimation and sensor fusion: EKF, UKF, Invariant EKF on Lie groups, Moving Horizon Estimation; consistency tests on innovations with the Mahalanobis distance, noise covariance tuning (Q, R).</li>
-                        <li>6-degree-of-freedom dynamics model with Dryden turbulence to generate synthetic wind scenarios; PID and feedforward control laws.</li>
-                        <li>Uncertainty quantification: Polynomial Chaos (Hermite), Unscented Transform, Sobol indices, validated against Monte Carlo simulations.</li>
-                        <li>Porting of Matlab prototypes to C++; benchmark of filters on accuracy, computational cost and runtime (Matlab/Simulink, C++, Python).</li>
-                    </ul>
-                </li>
-                <li><strong>2025: Quantitative Research Project (TER), Università di Corsica, supervised by J.-F. Muzy.</strong> Unified log S-fBM model of rough and multifractal volatility in financial markets.
-                    <ul>
-                        <li>Simulation of rough/multifractal paths; estimation of the Hurst exponent and intermittency on high-frequency data (GMM); heavy-tailed returns.</li>
-                        <li>Literature review and comparison with GARCH and stochastic volatility models; Monte Carlo option pricing.</li>
-                        <li>Predictive features from lead-lag transforms and randomised signatures; signature regression with time-series cross-validation (Python, NumPy, SciPy, Pandas, scikit-learn, statsmodels).</li>
-                    </ul>
-                </li>
-                <li><strong>2024/2025: Production Yield Intern, X-FAB Semiconductor.</strong>
-                    <ul>
-                        <li>SQL extraction (joins, CTEs, window functions) from production databases; Python ETL pipeline (Pandas, SQLAlchemy) feeding Power BI dashboards on yield and defect-rate KPIs per lot and per equipment.</li>
-                        <li>Automated data-quality checks (duplicates, missing values, inconsistencies); statistical analysis in JMP, reporting automation in Python and Excel/VBA.</li>
-                        <li>Defect prediction model: Poisson point processes and Extreme Value Theory (Peaks Over Threshold, Generalised Pareto), fitted by maximum likelihood; out-of-sample validation, stress scenarios on extreme quantiles and Bayesian decision support.</li>
-                        <li>Combinatorial optimisation of production scheduling (C).</li>
-                    </ul>
-                </li>
-                <li><strong>2023: Signal Processing Intern, Annecy Laboratory of Particle Physics (LAPP).</strong>
-                    <ul>
-                        <li>Consolidation of gravitational-wave data from VIRGO, LIGO and KAGRA into a common format (SQL, Python); data quality control.</li>
-                        <li>Whitening, band-pass filtering, Welch power spectral density and spectrograms (scipy.signal); simulated signals to test the processing chain.</li>
-                    </ul>
-                </li>
-                <li><strong>2023–2026: University evening classes and oral examinations (khôlles)</strong> in applied mathematics (3 hours/week).</li>
-            </ul>
-        </div>
-    </div>
+<section class="abstract">
+  <h2>Abstract</h2>
+  <p>This page collects my research and engineering projects, each accompanied by a two-page mathematical summary. The common thread is probability and operational research: stochastic modelling, statistical inference and optimisation, applied to finance, industry, autonomous systems and machine learning.</p>
+</section>
 
-        <li><strong>Technical Skills:</strong> Python (NumPy, SciPy, Pandas, scikit-learn, PyTorch), C/C++, R, SQL, Matlab/Simulink, Power BI, JMP, Excel/VBA; Git, CI/CD, Linux.</li>
-        <li><strong>Languages:</strong> French (Native), English (C1), German (B2).</li>
-        <li><strong>Contact:</strong> olivier.p.etude@gmail.com</li>
-    </ul>
-</div>
+<h2 class="section"><span class="num">1</span>About</h2>
+<ul class="facts">
+  <li><strong>Education.</strong> BSc in Mathematics and BSc in Statistical Physics, Université Savoie Mont-Blanc, Chambéry (2023).</li>
+  <li><strong>Current position.</strong> MSc (M2) in Mathematical Modelling, specialising in Probability and PDE, Sorbonne Université &amp; École Polytechnique, Paris (2023–2026). Available from January 2027.</li>
+  <li><strong>Research interests.</strong> Rough volatility in statistical finance, operational research, stochastic calculus, Bayesian statistics, data analysis and optimisation.</li>
+  <li>
+    <details>
+      <summary>Professional experience</summary>
+      <ul>
+        <li><strong>2026: R&amp;D Stochastic Modelling Intern, Parrot Drones (Paris).</strong>
+          <ul>
+            <li>Multi-sensor flight-log processing (IMU, GPS, barometer): time synchronisation, resampling, missing values, spectral analysis (FFT, power spectral density).</li>
+            <li>State estimation and sensor fusion: EKF, UKF, Invariant EKF on Lie groups, Moving Horizon Estimation; consistency tests on innovations with the Mahalanobis distance, noise covariance tuning (Q, R).</li>
+            <li>6-degree-of-freedom dynamics model with Dryden turbulence to generate synthetic wind scenarios; PID and feedforward control laws.</li>
+            <li>Uncertainty quantification: Polynomial Chaos (Hermite), Unscented Transform, Sobol indices, validated against Monte Carlo simulations.</li>
+            <li>Porting of Matlab prototypes to C++; benchmark of filters on accuracy, computational cost and runtime (Matlab/Simulink, C++, Python).</li>
+          </ul>
+        </li>
+        <li><strong>2025: Quantitative Research Project (TER), Università di Corsica, supervised by J.-F. Muzy.</strong> Unified log S-fBM model of rough and multifractal volatility in financial markets.
+          <ul>
+            <li>Simulation of rough/multifractal paths; estimation of the Hurst exponent and intermittency on high-frequency data (GMM); heavy-tailed returns.</li>
+            <li>Literature review and comparison with GARCH and stochastic volatility models; Monte Carlo option pricing.</li>
+            <li>Predictive features from lead-lag transforms and randomised signatures; signature regression with time-series cross-validation (Python, NumPy, SciPy, Pandas, scikit-learn, statsmodels).</li>
+          </ul>
+        </li>
+        <li><strong>2024/2025: Production Yield Intern, X-FAB Semiconductor.</strong>
+          <ul>
+            <li>SQL extraction (joins, CTEs, window functions) from production databases; Python ETL pipeline (Pandas, SQLAlchemy) feeding Power BI dashboards on yield and defect-rate KPIs per lot and per equipment.</li>
+            <li>Automated data-quality checks (duplicates, missing values, inconsistencies); statistical analysis in JMP, reporting automation in Python and Excel/VBA.</li>
+            <li>Defect prediction model: Poisson point processes and Extreme Value Theory (Peaks Over Threshold, Generalised Pareto), fitted by maximum likelihood; out-of-sample validation, stress scenarios on extreme quantiles and Bayesian decision support.</li>
+            <li>Combinatorial optimisation of production scheduling (C).</li>
+          </ul>
+        </li>
+        <li><strong>2023: Signal Processing Intern, Annecy Laboratory of Particle Physics (LAPP).</strong>
+          <ul>
+            <li>Consolidation of gravitational-wave data from VIRGO, LIGO and KAGRA into a common format (SQL, Python); data quality control.</li>
+            <li>Whitening, band-pass filtering, Welch power spectral density and spectrograms (scipy.signal); simulated signals to test the processing chain.</li>
+          </ul>
+        </li>
+        <li><strong>2023–2026: University evening classes and oral examinations (khôlles)</strong> in applied mathematics (3 hours/week).</li>
+      </ul>
+    </details>
+  </li>
+  <li><strong>Technical skills.</strong> Python (NumPy, SciPy, Pandas, scikit-learn, PyTorch), C/C++, R, SQL, Matlab/Simulink, Power BI, JMP, Excel/VBA; Git, CI/CD, Linux.</li>
+  <li><strong>Languages.</strong> French (native), English (C1), German (B2).</li>
+</ul>
 
-<!-- Repository: drone return-to-home uncertainty -->
-<div class="repository">
-    <h2 onclick="toggleContent('reporth')">Online Uncertainty Quantification for a Drone's Return-to-Home Decision</h2>
-    <div id="reporth" class="content" style="display: none;">
-        <p class="abstract">
-            A drone triggers its automatic return when the remaining energy no longer covers the predicted return energy plus a fixed safety margin. Read as a forecast, this margin has the same spread for every flight. This project builds a <strong>flight-conditional predictive law</strong> of the battery charge at arrival and sets the margin from a chosen risk level (a low quantile) instead.
-        </p>
-        <p class="abstract">
-            The prediction loop is shown to have exactly five random inputs, each modelled as &mu; + F&xi; with a Gaussian germ frozen over the return. Candidate uncertainty models are ranked with the <strong>CRPS</strong>, a strictly proper scoring rule, through a logarithmic skill score that splits exactly into a centre and a width term, the latter bounded by 0.2256. On board, uncertainty is propagated by an <strong>unscented transform</strong> and by a <strong>Hermite polynomial chaos</strong> whose coefficients are learnt online by a <strong>Kalman filter</strong>, with a three-term bound on the error of the decision quantile.
-        </p>
-        <ul>
-            <li><strong>Scoring:</strong> strict propriety of the CRPS via the Cram&eacute;r distance, closed-form Gaussian CRPS, exact centre/width split of the log skill score and its universal ceiling.</li>
-            <li><strong>Decision:</strong> the value of conditional uncertainty under a mean-survival criterion is proved to be of second order, positive only beyond z = &radic;2 or with conditional bias correction.</li>
-        </ul>
-        <div class="progress-bar">
-            <div class="progress" style="width: 100%;"></div>
-        </div>
-        <p class="progress-text">100% completed</p>
-        <a href="pdf/rth_uncertainty.pdf" target="_blank">research summary (2 pages)</a>
-    </div>
-</div>
+<h2 class="section"><span class="num">2</span>Projects</h2>
 
-<!-- Repository: audience interests -->
-<div class="repository">
-    <h2 onclick="toggleContent('repoaudience')">Inferring Audience Interests with BERT for Ad Targeting</h2>
-    <div id="repoaudience" class="content" style="display: none;">
-        <p class="abstract">
-            Advertisers usually target content (what a video is about), not audiences (who actually watches it). This project infers the interests of the audience of a social-media channel from the public comments it receives. Each comment is mapped by a contrastively fine-tuned BERT encoder to a point on the unit sphere, and a channel is represented by the <strong>kernel mean embedding</strong> of its comment distribution.
-        </p>
-        <p class="abstract">
-            Under a topic-mixture model of the audience, this embedding is a linear image of the average interest vector of the audience; its inner product with an advertiser's description equals the expected affinity of a random commenter with the product, which approximates a pointwise mutual information at the contrastive optimum. Its estimator concentrates at a dimension-free rate, and look-alike targeting reduces to a maximum mean discrepancy between audiences.
-        </p>
-        <ul>
-            <li><strong>Data:</strong> 3,154 French YouTube channels, comments only, no individual profiling.</li>
-            <li><strong>Result:</strong> recovers channels already sponsored by a given advertiser with AUC 0.87 (look-alike), an 18&times; lift over random in the top 20.</li>
-        </ul>
-        <div class="progress-bar">
-            <div class="progress" style="width: 50%;"></div>
-        </div>
-        <p class="progress-text">50% completed &middot; 5 clients</p>
-        <a href="pdf/audience_interest_bert.pdf" target="_blank">research summary (2 pages)</a>
-    </div>
-</div>
+<article>
+  <h3><span class="num">2.1</span>Online Uncertainty Quantification for a Drone's Return-to-Home Decision</h3>
+  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/rth_uncertainty.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <p>A drone triggers its automatic return when the remaining energy no longer covers the predicted return energy plus a fixed safety margin; read as a forecast, this margin has the same spread for every flight. We build instead a flight-conditional predictive law of the battery charge at arrival and set the margin from a chosen risk level. The prediction loop has exactly five random inputs, each modelled as &mu; + F&xi; with a Gaussian germ frozen over the return. Candidate uncertainty models are ranked with the CRPS, a strictly proper scoring rule, through a logarithmic skill score that splits exactly into a centre and a width term, the latter bounded by 0.2256. On board, uncertainty is propagated by an unscented transform and by a Hermite polynomial chaos whose coefficients are learnt online by a Kalman filter, with a three-term bound on the error of the decision quantile. Under a mean-survival criterion, the value of conditional uncertainty is shown to be of second order, positive only beyond z = &radic;2 or with conditional bias correction.</p>
+  <p class="keywords"><em>Keywords:</em> uncertainty quantification, proper scoring rules, CRPS, polynomial chaos, unscented transform, Kalman filter.</p>
+</article>
 
-<!-- Repository 2 -->
-<div class="repository">
-    <h2 onclick="toggleContent('repovolatility')">The log S-fBM model</h2>
-    <div id="repovolatility" class="content" style="display: none;">
-        <p class="abstract">
-            The log Stationary Fractional Brownian Motion (log S-fBM) is a novel stochastic process designed to model financial volatility. It bridges rough and multifractal volatility models by capturing the "roughness" of volatility when the Hurst exponent H approaches zero. The log S-fBM is particularly useful because it combines the flexibility of fractional Brownian motion with stationary covariance, making it suitable for modeling both short-term and long-term volatility dynamics.
-        </p>
-        <p>
-            By taking the exponential of the S-fBM process, the resulting measure reflects multifractal properties of asset returns, such as non-trivial scaling behavior and heavy-tailed distributions. This makes the log S-fBM a powerful tool for accurately reproducing empirical features of financial markets, including the power-law behavior of option prices near maturity.
-        </p>
-        <p>
-            To estimate the parameters of the log S-fBM model, advanced statistical techniques like the Generalized Method of Moments (GMM) are employed. The GMM approach leverages analytical expressions for the second-order moments of the log S-fBM measure and its logarithm, ensuring robust parameter estimation even with small intermittency effects. The methodology is validated through numerical simulations and applied to real-world data, such as daily volatility of individual stocks and market indices.
-        </p>
-        <p>
-            Key advantages of the log S-fBM include:
-            <ul>
-                <li><strong>Flexibility:</strong> Unifies rough and multifractal volatility models, enabling analysis across different volatility regimes.</li>
-                <li><strong>Accuracy:</strong> Captures key empirical properties of financial volatility, such as scaling behavior and heavy tails.</li>
-                <li><strong>Practicality:</strong> Efficient calibration to large datasets using GMM ensures real-world applicability.</li>
-            </ul>
-        </p>
-        <div class="progress-bar">
-            <div class="progress" style="width: 20%;"></div> <!-- Adjust width for progress -->
-        </div>
-        <p class="progress-text">20% completed</p> <!-- Progress text -->
-        <a href="pdf/log_sfbm.pdf" target="_blank">research summary (2 pages)</a> &middot;
-        <a href="pdf/v1_S_fbm.pdf" target="_blank">v1 report</a>
-    </div>
-</div>
-    
-<div class="repository">
-    <h2 onclick="toggleContent('repo2')">Creating a Voting System</h2>
-    <div id="repo2" class="content" style="display: none;">
-        <p class="abstract"><strong>Towards a Secure and Verifiable Online Voting System</strong></p>
-        <p>The 2022 legislative elections marked a significant advancement with the introduction of online voting for French deputies representing overseas constituencies. This option, adopted by more than 77% of voters, highlights the importance for citizens, especially isolated individuals, to be able to cast their votes remotely.</p>
-        
-        <p>However, the solution implemented via the Scytl platform presents a major limitation: the absence of a mechanism allowing voters to verify that their vote has been counted. Unlike physical voting, where verification is visual, voters must trust a central entity to tally the votes.</p>
-        
-        <p><strong>Solutions to Ensure Transparency</strong></p>
-        <p>To address this issue, several approaches have emerged to guarantee the transparency and integrity of elections. Some solutions draw inspiration from cryptocurrencies and integrate blockchain into voting systems. This technology enables complete decentralization by eliminating the need for a central server. However, its use leads to significant costs and energy consumption. For example, the French company V8TE, which relies on an Ethereum blockchain, faces these challenges, limiting the feasibility of such an approach on a large scale.</p>
-        
-        <p><strong>A More Efficient Alternative</strong></p>
-        <p>This is why I propose an alternative system based on three key technologies, ensuring the security and verifiability of voting without the energy and financial drawbacks of a public blockchain:</p>
-        
-        <ul>
-            <li><strong>Homomorphic encryption:</strong> This allows votes to be counted without decrypting each individual choice, thus ensuring ballot confidentiality.</li>
-            <li><strong>Zero-knowledge proofs:</strong> These ensure that each vote is valid without revealing its content, enhancing the transparency of the process.</li>
-            <li><strong>An individual verification function:</strong> Each voter can confirm that their vote has been correctly counted in the final tally.</li>
-        </ul>
-        
-        <p>This model follows the principles of the Helios project, aiming to expand its application to large-scale elections involving up to a million participants while optimizing the resources needed for its operation.</p>
-        
-        <p>Beyond securing online voting, such a system could address two major challenges. Firstly, it would provide an alternative for elections where the central entity is deemed unreliable or vulnerable to cyberattacks. Secondly, it would pave the way for a new form of direct democracy. We could imagine deputies, elected officials, or ministers using this mechanism to directly consult public opinion on certain issues, without the risk of interference in the results, unlike centralized systems.</p>
-        
-        <p>This decentralized model thus represents a promising avenue for enhancing transparency and trust in online voting while avoiding the technical and economic pitfalls associated with the systematic use of blockchain.</p>
-        
-        <div class="progress-bar">
-            <div class="progress" style="width: 20%;"></div>
-        </div>
-        <p class="progress-text">20% completed</p>
-        <a href="pdf/voting_system.pdf" target="_blank">research summary (2 pages)</a> &middot;
-        <a href="pdf/voting_system_v2.pdf" target="_blank">technical report</a>
-    </div>
-</div>
+<article>
+  <h3><span class="num">2.2</span>Inferring Audience Interests with BERT for Ad Targeting</h3>
+  <div class="meta"><div class="bar"><span style="width:50%"></span></div><span>50% completed</span><span>5 clients</span><a href="pdf/audience_interest_bert.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <p>Advertisers usually target what a video is about rather than who watches it. We infer the interests of a channel's audience from the public comments it receives. Each comment is mapped to the unit sphere by a contrastively fine-tuned BERT encoder, and a channel is represented by the kernel mean embedding of its comment distribution. Under a topic-mixture model, this embedding is a linear image of the audience's average interest vector; its inner product with an advertiser's description is the expected affinity of a random commenter with the product, and its estimator concentrates at a dimension-free rate. Look-alike targeting reduces to a maximum mean discrepancy between audiences. On 3,154 French YouTube channels, the method recovers channels already sponsored by a given advertiser with AUC 0.87, an 18&times; lift over random in the top 20, without any individual-level profiling.</p>
+  <p class="keywords"><em>Keywords:</em> BERT, sentence embeddings, kernel mean embedding, maximum mean discrepancy, audience targeting.</p>
+</article>
 
-<!-- Repository 2 -->
-<div class="repository">
-    <h2 onclick="toggleContent('repo3')">scheduling dependent non preemptive task</h2>
-    <div id="repo3" class="content" style="display: none;">
-        <p class="abstract">The problem addressed in the study is how to efficiently schedule tasks that depend on each other, minimizing the total time required to complete them (known as "makespan"). This is a common challenge in many industries, such as manufacturing, computing, and project management. The study evaluated several scheduling methods, including Blevel, Genetic Algorithm, and others, to find the most effective solution. It found that the Blevel approach consistently performed the best, significantly reducing completion times compared to other methods. While the Genetic Algorithm showed potential for further improvement, it was less practical due to high computational costs and variability. Thus, the study concludes that Blevel is currently the optimal solution for minimizing makespan, providing a practical and efficient way for companies to improve task scheduling and increase productivity.</p>
-        <div class="progress-bar">
-            <div class="progress" style="width: 80%;"></div> <!-- Adjust width for progress -->
-        </div>
-        <p class="progress-text">80% completed</p> <!-- Progress text -->
-        <a href="pdf/scheduling.pdf" target="_blank">research summary (2 pages)</a> &middot;
-        <a href="pdf/scheduling_dependent_non_preemptive_tasks.pdf" target="_blank">full report</a>
-    </div>
-</div>
+<article>
+  <h3><span class="num">2.3</span>The log S-fBM Model: a Stationary Bridge between Rough and Multifractal Volatility</h3>
+  <div class="meta"><div class="bar"><span style="width:20%"></span></div><span>20% completed</span><a href="pdf/log_sfbm.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <p>Empirical volatility is rough: its logarithm behaves like a fractional Brownian motion with Hurst exponent H &asymp; 0.1 or smaller, while multifractal random measures (MRM) describe the limit H &rarr; 0 but have no roughness parameter. The log stationary fractional Brownian motion (log S-fBM) contains both. We prove that its covariance is admissible, show its convergence to the log-normal MRM as H &rarr; 0 at fixed intermittency, and derive exact second-order moments of the integrated variance and of its logarithm. These moments define a generalised method of moments (GMM) estimator that avoids the upward bias of scaling-based estimators of H, observed in simulation where a true H = 0.002 is estimated at 0.082.</p>
+  <p class="keywords"><em>Keywords:</em> rough volatility, multifractal random measure, fractional Brownian motion, generalised method of moments.</p>
+</article>
 
-    
-    
-<div class="repository">
-    <h2 onclick="toggleContent('repo4')">Bayesian Modeling for Defect Prediction</h2> 
-    <div id="repo4" class="content" style="display: none;"> 
-        <p class="abstract">
-            This project aims to explore and analyze the relationship between two key variables in an industrial or inventory management context: the number of days a product has been stored (X) and the number of defects observed on this product (Y). 
-            The main objective is to determine whether there is a cause-and-effect relationship between these two variables and to use this knowledge to predict the number of defects based on storage time. 
-            To achieve this, we adopt a Bayesian approach, which allows us to model uncertainties in a rigorous and flexible manner, particularly when the number of analyzed products is small (<100).
-        </p>
-        
-        <p class="abstract">
-            The main steps include:
-        </p>
-        <ul>
-            <li><strong>Statistical modeling:</strong> Define a probabilistic model linking X and Y (e.g., a Poisson distribution with a rate dependent on X).</li>
-            <li><strong>Bayesian inference:</strong> Estimate the model parameters based on available data.</li>
-            <li><strong>Validation and interpretation:</strong> Assess the model's quality and test the hypothesis of a relationship between X and Y.</li>
-            <li><strong>Prediction and decision-making:</strong> Use the model to predict the number of defects for new products and define inventory management strategies.</li>
-        </ul>
-        
-        <div class="progress-bar">
-            <div class="progress" style="width: 50%;"></div> <!-- Adjust width for progress -->
-        </div>
-        <p class="progress-text">50% completed</p> <!-- Progress text -->
-        <a href="pdf/bayesian_defects.pdf" target="_blank">research summary (2 pages)</a> &middot;
-        <a href="pdf/Bayesian_Modeling_for_Defect_Prediction.pdf" target="_blank">v1 report</a>
-    </div>
-</div>
+<article>
+  <h3><span class="num">2.4</span>End-to-End Verifiable Online Voting without a Blockchain</h3>
+  <div class="meta"><div class="bar"><span style="width:20%"></span></div><span>20% completed</span><a href="pdf/voting_system.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <p>More than 77% of French voters abroad voted online in the 2022 legislative elections, yet none could verify that their ballot had been counted. We describe an end-to-end verifiable protocol in the line of Helios that requires no blockchain. Ballots are encrypted with exponential ElGamal, so that the tally is computed on ciphertexts; each ballot carries non-interactive zero-knowledge proofs of validity; the decryption key is shared among trustees; every voter can find their ballot on a public bulletin board and anyone can recompute the result. We state the security reductions, prove the soundness and zero-knowledge property of the proofs, and show that universal verification of an election with 10<sup>6</sup> voters takes minutes on commodity hardware, without the energy cost of a public blockchain.</p>
+  <p class="keywords"><em>Keywords:</em> homomorphic encryption, zero-knowledge proofs, threshold decryption, verifiable voting.</p>
+</article>
 
-    <!-- Repository 1 -->
-    <div class="repository">
-    <h2 onclick="toggleContent('repo1')">AI-Powered Multiplatform Viral Video Creation</h2>
-    <div id="repo1" class="content" style="display: none;">
-        <p class="abstract">This project automates viral video creation with automatic subtitling, AI-generated background music, and cross-platform posting via APIs for YouTube, TikTok and Instagram.</p>
-        <div class="progress-bar">
-            <div class="progress" style="width: 50%;"></div> <!-- Adjust width for progress -->
-        </div>
-        <p class="progress-text">50% completed</p> <!-- Progress text -->
-        <a href="pdf/viral_video.pdf" target="_blank">research summary (2 pages)</a> &middot;
-        <a href="pdf/subtitles_caption.pdf" target="_blank">automatic subtitling</a>
-        <a href="pdf/music_video.pdf" target="_blank">background music</a>
-        <a href="pdf/api_multiplateform.pdf" target="_blank">cross-platform posting</a>
-    </div>
-</div>
+<article>
+  <h3><span class="num">2.5</span>List Scheduling of Dependent Non-Preemptive Tasks</h3>
+  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/scheduling.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <p>We minimise the makespan of tasks with precedence constraints on m identical machines without preemption, a strongly NP-hard problem. List scheduling guarantees a ratio 2 &minus; 1/m for any priority rule (Graham); we compare the height, depth, t-level, b-level, number-of-successors and duration rules, a fuzzy tie-breaking rule, and a genetic algorithm searching over weighted combinations of these priorities. On 180 random graphs of 1,000 tasks, the b-level rule reduces the makespan by 2.43% on average relative to the height rule (standard error 0.30); neither the fuzzy tie-break nor the genetic algorithm yields a significant further gain, which makes b-level list scheduling the best rule at equal computational cost.</p>
+  <p class="keywords"><em>Keywords:</em> P|prec|C<sub>max</sub>, list scheduling, critical path, b-level, genetic algorithms.</p>
+</article>
 
+<article>
+  <h3><span class="num">2.6</span>Bayesian Poisson Regression for Defect Prediction from Storage Time</h3>
+  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/bayesian_defects.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <p>With about a hundred products, we model the number of defects as a function of storage time by a Bayesian Poisson regression with log link. The posterior is strictly log-concave, which justifies Laplace and Hamiltonian Monte Carlo inference. The naive quantity P(&beta;<sub>1</sub> &ne; 0 | data) equals 1 under any continuous prior; we replace it by directional probabilities, a region of practical equivalence and a Savage&ndash;Dickey Bayes factor. Rao&ndash;Blackwellised estimators give the probability that a product falls into each defect band; these probabilities increase with storage time, which yields a maximal storage time at a chosen risk level. Conditions for a causal reading and model checks (overdispersion, WAIC, leave-one-out cross-validation) are made explicit.</p>
+  <p class="keywords"><em>Keywords:</em> Bayesian inference, Poisson regression, Hamiltonian Monte Carlo, Bayes factors, predictive risk.</p>
+</article>
 
-    <!-- Repository final -->
-    <div class="repository">
-        <h2 onclick="toggleContent('repofinal')"></h2>
-        <div id="repofinal" class="content" style="display: none;">
-            <p class="abstract">In coming</p>
-            <div class="progress-bar">
-                <div class="progress" style="width: 0%;"></div> <!-- Adjust width for progress -->
-            </div>
-            <p class="progress-text">0% completed</p> <!-- Progress text -->
-            <a href="Bayesian_Modeling_for_Defect_Prediction.pdf" target="_blank">Bayesian Modeling for Defect Prediction</a>
-        </div>
-    </div>
+<article>
+  <h3><span class="num">2.7</span>An Automated Pipeline for Short-Form Video: Speech Recognition, Captions, Music Generation and Distribution</h3>
+  <div class="meta"><div class="bar"><span style="width:100%"></span></div><span>100% completed</span><a href="pdf/viral_video.pdf" target="_blank">[PDF, 2 pages]</a></div>
+  <p>We describe the mathematics of a pipeline that turns a raw video into a captioned, scored video published on YouTube, TikTok and Instagram. Speech is transcribed by Whisper, an encoder&ndash;decoder Transformer on log-Mel spectrograms; word timestamps are obtained by dynamic time warping on cross-attention; captions are formed by an optimal segmentation of the word sequence and highlighted word by word without timing drift. Background music is sampled from MusicGen, an autoregressive Transformer over residual-vector-quantised audio codes with classifier-free guidance, conditioned on the transcript and mixed at a target loudness. Publication is formulated as an assignment problem under API quotas.</p>
+  <p class="keywords"><em>Keywords:</em> speech recognition, dynamic time warping, dynamic programming, neural audio codecs, music generation.</p>
+</article>
 
-    <!-- Add more repositories as needed -->
-
-    <!-- Footer -->
-
-    <footer>
-        &copy; 2025 Projects-Hub. All rights reserved.
-    </footer>
-
-    <script>
-        function toggleContent(repoId) {
-            const content = document.getElementById(repoId);
-            if (content.style.display === "none") {
-                content.style.display = "block";
-            } else {
-                content.style.display = "none";
-            }
-        }
-    </script>
+</main>
 </body>
 </html>
