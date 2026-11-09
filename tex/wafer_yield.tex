@@ -1,0 +1,126 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage{hubpaper}
+\newcommand{\Pois}{\mathrm{Pois}}
+\newcommand{\Ac}{\bar A_c}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\one}{\mathbf 1}
+\hubtitle{Wafer Yield as a Functional of a Marked Cox Process:\\ Critical Area, Defect Clustering and\\ Hierarchical Spatial Inference}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent We formulate die yield as the void probability of a marked point process of defects restricted to the critical region of a layout. Under a Poisson law this gives the exact model $Y=e^{-\lambda}$, where $\lambda$ is the defect density times the size-averaged critical area, not the die area. Clustering is modelled by a Cox process: yield becomes a Laplace functional, which contains the Murphy, Seeds and negative binomial models as particular mixing laws and is never below the Poisson yield. We show that the clustering parameter is not intrinsic: it depends on the scale of the mixing relative to the die, and only large-scale mixing correlates neighbouring dies. A log-Gaussian Cox model with lot, wafer, radial and Mat\'ern spatial effects plus a systematic component leads to a complementary log-log mixed model, derived rather than assumed. We give identifiability conditions, the law of good dies per wafer and a Bayesian inference procedure.
+\end{abstract}
+
+\section{Defects as a marked point process}
+Let $W\subset\R^2$ be the wafer and $D_j\subset W$ the dies, of area $A$. Defects form a point process $\Phi=\{(X_i,R_i,L_i)\}$ on $W\times\R_+\times\{1,\dots,m\}$ (position, diameter, layer). For a layout, a defect $(x,r,l)$ kills die $j$ iff $x\in C_{j,l}(r)$, the \emph{critical region}; $A_{c,l}(r)=|C_{j,l}(r)|$ is the critical area~\cite{stapper1984,maly1985}. Let $K_j=\{(x,r,l):x\in C_{j,l}(r)\}$. The defect-limited yield of die $j$ is the void probability
+\begin{equation}
+Y_j=\Prob\big(\Phi(K_j)=0\big),
+\end{equation}
+
+\begin{proposition}[Poisson yield]\label{prop:pois}
+If $\Phi$ is Poisson with intensity $D_l(x)f_l(r)\,dx\,dr$ on layer $l$, the number of killer defects is $N_j=\Phi(K_j)\sim\Pois(\lambda_j)$ and $Y_j=e^{-\lambda_j}$, with
+\begin{equation}
+\lambda_j=\sum_{l=1}^m\int_0^\infty\!\!\int_{C_{j,l}(r)}D_l(x)\,dx\,f_l(r)\,dr .
+\end{equation}
+For uniform densities, $\lambda_j=\sum_lD_l\Ac_{,l}$ with $\Ac_{,l}=\int A_{c,l}(r)f_l(r)dr$.
+\end{proposition}
+\begin{proof}
+The restriction of a Poisson process to a measurable set is Poisson with the restricted intensity~\cite{kingman1993}; $\Phi(K_j)$ is therefore Poisson with mean the intensity measure of $K_j$.
+\end{proof}
+The classical $e^{-D_0A}$~\cite{leachman2014} is thus the case $\Ac=A$; in general $\theta=\Ac/A\in[0,1]$ is the probability that a defect landing in the die is fatal (the \emph{kill ratio}), and the product form over layers is exact. Defect sizes follow the power law $f(r)=(p-1)r_0^{p-1}r^{-p}$, $r\ge r_0$, with $p\approx3$~\cite{stapper1983,ferrisprabhu1985}.
+
+\textbf{Example.} Two parallel lines of length $L$ at spacing $s\ge r_0$, ignoring end effects: an extra-material defect of diameter $r$ shorts them iff its centre lies in a strip of width $(r-s)_+$, so $A_c(r)=L(r-s)_+$. With $p=3$,
+\[
+\Ac=\int_s^\infty L(r-s)\frac{2r_0^2}{r^3}\,dr=2Lr_0^2\Big(\frac1s-\frac{s}{2s^2}\Big)=\frac{Lr_0^2}{s},
+\]
+and opens of a line of width $w$ give $Lr_0^2/w$, so $\partial_s\log Y=D\,Lr_0^2/s^2$; for real layouts $A_c(r)$ is computed by Voronoi diagrams~\cite{papadopoulou1999}.
+
+\section{Clustering: Cox processes}
+Densities vary across lots, wafers and regions~\cite{stapper1986,cunningham1990}. Let $\Phi$ be Cox with random intensity measure $\Lambda$, i.e.\ Poisson given $\Lambda$~\cite{daley2008}. Conditioning gives
+\begin{equation}
+Y_j=\E\big[e^{-\Lambda(K_j)}\big],
+\end{equation}
+the Laplace functional of $\Lambda$ at $\one_{K_j}$.
+
+\begin{proposition}[mixtures]\label{prop:mix}
+(i) $Y_j\ge e^{-\E\Lambda(K_j)}$, with equality iff $\Lambda(K_j)$ is a.s.\ constant: clustering raises yield at fixed mean defect count. (ii) If $\Lambda=W\mu$ with $W\ge0$, $\E W=1$ and $\lambda=\mu(K_j)$, then $Y=\E e^{-\lambda W}$. $W\sim\mathrm{Gamma}(\alpha,\alpha)$ gives the negative binomial yield $Y=(1+\lambda/\alpha)^{-\alpha}$~\cite{stapper1983}; $W\sim\mathrm{Exp}(1)$ gives Seeds, $1/(1+\lambda)$~\cite{seeds1967}; $W$ triangular on $[0,2]$ gives Murphy, $\big((1-e^{-\lambda})/\lambda\big)^2$~\cite{murphy1964}; $\alpha\to\infty$ recovers Poisson. (iii) $\mathrm{Var}\,N=\lambda+\lambda^2\mathrm{Var}\,W$; for the gamma law $\alpha=1/\mathrm{Var}\,W$, whose moment estimator is $\hat\alpha=\hat\mu^2/(\hat\sigma^2-\hat\mu)$.
+\end{proposition}
+\begin{proof}
+(i) Jensen for the strictly convex $e^{-t}$. (ii) The gamma Laplace transform is $(1+t/\alpha)^{-\alpha}$; a triangular law on $[0,2]$ is the law of $U_1+U_2$ with $U_i$ i.i.d.\ uniform on $[0,1]$, whose Laplace transform is the square of $(1-e^{-t})/t$. (iii) Law of total variance.
+\end{proof}
+The estimator $\hat\mu^2/\hat\sigma^2$ ignores the Poisson part of the variance; maximum likelihood on per-die counts is preferable.
+
+\begin{proposition}[scale of clustering]\label{prop:scale}
+Let $D_i,D_j$ be disjoint dies. (a) \emph{Small-area clustering.} For a single defect size class with critical area $A_c$, if $\Lambda$ is a gamma random measure on $W$ with shape $\beta|\cdot|$ and rate $b$ (independent increments), die outcomes are independent and $Y=(1+1/b)^{-\beta A_c}$: yield is log-linear in critical area, with effective density $\beta\log(1+1/b)<\beta/b=\E D$. (b) \emph{Large-area clustering.} If $\Lambda=W\mu$, then $\mathrm{Cov}(\one_{\{N_i=0\}},\one_{\{N_j=0\}})=\mathrm{Cov}(e^{-\lambda_iW},e^{-\lambda_jW})\ge0$, strictly unless $W$ is degenerate; a block of $k$ dies has yield $\E e^{-k\lambda W}$.
+\end{proposition}
+\begin{proof}
+(a) $\Lambda(C_j)\sim\mathrm{Gamma}(\beta A_c,b)$, with Laplace transform $(1+1/b)^{-\beta A_c}$ at $1$, and increments on disjoint sets are independent. (b) Given $W$ the counts are independent Poisson; both functions are non-increasing in $W$, hence positively correlated by Chebyshev's association inequality~\cite{esary1967}.
+\end{proof}
+Hence $\alpha$ is not a constant of the process: it depends on the correlation length of $\Lambda$ relative to the die, hence on area and block size~\cite{stapper1989,koren1993}. Windowing~\cite{leachman2014} identifies the Laplace transform of $W$ only in regime (b).
+
+\section{A hierarchical spatial model}
+Let $Z_{\ell wj}\in\{0,1\}$ be the test outcome of die $j$ (centre $x_j$) of wafer $w$ in lot $\ell$. We take a log-Gaussian Cox process~\cite{moller1998}
+\begin{equation}
+\Lambda_{\ell w}(dx)=D_0\,e^{u_\ell+v_{\ell w}+h(\|x\|)+S_{\ell w}(x)}dx,
+\end{equation}
+$\eta_{\ell w}(x)$ denoting the exponent, with $u_\ell\sim\mathcal N(0,\sigma_u^2)$, $v_{\ell w}\sim\mathcal N(0,\sigma_v^2)$, $h$ a penalised radial spline (edge rings, centre spots) and $S_{\ell w}$ a Mat\'ern field, written as the solution of $(\kappa^2-\Delta)^{\alpha/2}S=\mathcal W$ so that it is a sparse Gaussian Markov random field on a mesh~\cite{lindgren2011}. Losses that do not scale with critical area (mis-processing, parametric failures) enter as an independent systematic pass event with probability $Y_s(x)=\mathrm{logit}^{-1}g(x)$.
+
+\begin{proposition}[derived link]\label{prop:link}
+If $\eta_{\ell w}$ is constant on each die, then
+\begin{equation}
+\Prob(Z_{\ell wj}=1\mid\eta)=Y_s(x_j)\exp\!\big(-D_0\Ac\,e^{\eta_{\ell w}(x_j)}\big).
+\end{equation}
+For $Y_s\equiv1$ this is a Bernoulli mixed model for the failure event with complementary log-log link, $\log\!\big(-\log\Prob(Z=1\mid\eta)\big)=\log\Ac+\log D_0+\eta(x_j)$, and offset $\log\Ac$.
+\end{proposition}
+\begin{proof}
+Proposition~\ref{prop:pois} given $\eta$, and independence.
+\end{proof}
+The link follows from Poisson thinning; when $\eta$ varies within a die, $e^{\eta(x_j)}$ is replaced by the die average $A^{-1}\int_{D_j}e^{\eta}$, a linear functional of the field on the mesh. The marginal yield $Y_j=Y_s(x_j)\E\exp(-D_0\Ac e^{\eta_j})$, $\eta_j\sim\mathcal N(m_j,\tau_j^2)$, is the Laplace transform of a log-normal variable; it has no closed form and is computed by Gauss--Hermite quadrature, $\pi^{-1/2}\sum_kw_k\exp(-D_0\Ac e^{m_j+\sqrt2\tau_jt_k})$.
+
+\begin{proposition}[identifiability]
+From one critical area, only $Y_se^{-D_0\Ac}$ (Poisson) or $Y_s(1+D_0\Ac/\alpha)^{-\alpha}$ (gamma) is identified. With distinct critical areas $a_1<\dots<a_K$ (windowing in regime (b), or several products on the same process), $(Y_s,D_0)$ are identified for $K\ge2$ in the Poisson model, and $(Y_s,D_0,\alpha)$ are locally identified for $K\ge3$ outside a Lebesgue-null set of designs.
+\end{proposition}
+\begin{proof}
+Poisson: $\log Y(a)=\log Y_s-D_0a$ is affine. Gamma: with $t=D_0/\alpha$, the derivatives of $\log Y(a)$ with respect to $(\log Y_s,D_0,\alpha)$ are $1$, $-a/(1+ta)$ and $-\log(1+ta)+ta/(1+ta)$, three linearly independent analytic functions of $a$; the $3\times3$ Jacobian determinant is a non-zero analytic function of $(a_1,a_2,a_3)$, so it vanishes only on a null set.
+\end{proof}
+
+\section{Wafer yield, redundancy and inference}
+\textbf{Good dies per wafer.} $G_w=\sum_jZ_{wj}$ has $\E G_w=\sum_jY_j$ and $\mathrm{Var}\,G_w=\sum_jY_j(1-Y_j)+\sum_{i\neq j}\mathrm{Cov}(Z_i,Z_j)$, which exceeds the binomial variance under Proposition~\ref{prop:scale}(b). Its posterior predictive law, simulated from $(u,v,S)$ then $Z$, is the model-based wafer yield histogram; excursions (its left tail) are a two-state mixture on $v_{\ell w}$ whose posterior state probability is an SPC-type alarm.
+
+\textbf{Defect tolerance.} If redundancy repairs up to $k_0$ killer faults~\cite{koren1998}, $Y=\Prob(N\le k_0)$; under Proposition~\ref{prop:mix}(ii), with $q=\lambda/(\alpha+\lambda)$,
+\begin{equation}
+Y=\sum_{k=0}^{k_0}\frac{\Gamma(\alpha+k)}{\Gamma(\alpha)\,k!}\,(1-q)^\alpha q^k ,
+\end{equation}
+with the block-level law of~\cite{koren1993} when spares are shared.
+
+\textbf{Joint inference.} In-line inspection gives the positions of detected defects on layer $l$, a thinned version of $\Phi$ with detection probability $\pi_l$. Modelling these point patterns as a log-Gaussian Cox process sharing the field $S_{\ell w}$ with the test data couples inspection and electrical test in a single likelihood; the kill ratios $\theta_l=\Ac_{,l}/A$ are then estimated rather than assumed. Without the systematic mixture the model is latent Gaussian and is fitted by integrated nested Laplace approximations~\cite{rue2009}; with it, by Hamiltonian Monte Carlo with the discrete states marginalised.
+
+\textbf{Validation.} Models (Poisson, gamma, LGCP, with or without $h$, $S$) are compared by leave-one-wafer-out cross-validation, which respects within-wafer dependence, with the log score of $G_w$ and PIT calibration.
+
+\section{Conclusion}
+Classical yield models are Laplace transforms of particular mixing laws, and the clustering parameter reflects a scale rather than a constant. A log-Gaussian Cox model with a systematic component gives an identifiable complementary log-log spatial model, from which die, wafer and repaired yields follow with their uncertainty.
+
+\footnotesize
+\begin{thebibliography}{99}\setlength{\itemsep}{0pt}
+\bibitem{cunningham1990} J.~Cunningham. The use and evaluation of yield models in integrated circuit manufacturing. \emph{IEEE Trans.\ Semicond.\ Manuf.} 3(2):60--71, 1990.
+\bibitem{daley2008} D.~Daley, D.~Vere-Jones. \emph{An Introduction to the Theory of Point Processes}, Vol.~II, 2nd ed. Springer, 2008.
+\bibitem{esary1967} J.~Esary, F.~Proschan, D.~Walkup. Association of random variables, with applications. \emph{Ann.\ Math.\ Stat.} 38(5):1466--1474, 1967.
+\bibitem{ferrisprabhu1985} A.~Ferris-Prabhu. Defect size variations and their effect on the critical area of VLSI devices. \emph{IEEE J.\ Solid-State Circuits} 20(4):878--880, 1985.
+\bibitem{kingman1993} J.~Kingman. \emph{Poisson Processes}. Oxford Univ.\ Press, 1993.
+\bibitem{koren1998} I.~Koren, Z.~Koren. Defect tolerance in VLSI circuits: techniques and yield analysis. \emph{Proc.\ IEEE} 86(9):1819--1838, 1998.
+\bibitem{koren1993} I.~Koren, Z.~Koren, C.~Stapper. A unified negative-binomial distribution for yield analysis of defect-tolerant circuits. \emph{IEEE Trans.\ Comput.} 42(6):724--734, 1993.
+\bibitem{leachman2014} R.~Leachman. Yield modeling and analysis. Lecture notes, IEOR 130, Univ.\ of California, Berkeley.
+\bibitem{lindgren2011} F.~Lindgren, H.~Rue, J.~Lindstr\"om. An explicit link between Gaussian fields and Gaussian Markov random fields: the SPDE approach. \emph{J.\ R.\ Stat.\ Soc.\ B} 73(4):423--498, 2011.
+\bibitem{maly1985} W.~Maly. Modeling of lithography related yield losses for CAD of VLSI circuits. \emph{IEEE Trans.\ CAD} 4(3):166--177, 1985.
+\bibitem{moller1998} J.~M{\o}ller, A.~Syversveen, R.~Waagepetersen. Log Gaussian Cox processes. \emph{Scand.\ J.\ Stat.} 25(3):451--482, 1998.
+\bibitem{murphy1964} B.~Murphy. Cost-size optima of monolithic integrated circuits. \emph{Proc.\ IEEE} 52(12):1537--1545, 1964.
+\bibitem{papadopoulou1999} E.~Papadopoulou, D.~Lee. Critical area computation via Voronoi diagrams. \emph{IEEE Trans.\ CAD} 18(4):463--474, 1999.
+\bibitem{rue2009} H.~Rue, S.~Martino, N.~Chopin. Approximate Bayesian inference for latent Gaussian models by using integrated nested Laplace approximations. \emph{J.\ R.\ Stat.\ Soc.\ B} 71(2):319--392, 2009.
+\bibitem{seeds1967} R.~Seeds. Yield, economic, and logistic models for complex digital arrays. \emph{IEEE Int.\ Conv.\ Rec.}, 61--66, 1967.
+\bibitem{stapper1984} C.~Stapper. Modeling of defects in integrated circuit photolithographic patterns. \emph{IBM J.\ Res.\ Dev.} 28(4):461--475, 1984.
+\bibitem{stapper1986} C.~Stapper. On yield, fault distributions, and clustering of particles. \emph{IBM J.\ Res.\ Dev.} 30(3):326--338, 1986.
+\bibitem{stapper1989} C.~Stapper. Small-area fault clusters and fault tolerance in VLSI circuits. \emph{IBM J.\ Res.\ Dev.} 33(2):174--177, 1989.
+\bibitem{stapper1983} C.~Stapper, F.~Armstrong, K.~Saji. Integrated circuit yield statistics. \emph{Proc.\ IEEE} 71(4):453--470, 1983.
+\end{thebibliography}
+\end{document}
