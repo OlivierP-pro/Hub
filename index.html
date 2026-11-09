@@ -219,6 +219,28 @@
     </ul>
 </div>
 
+<!-- Repository: drone return-to-home uncertainty -->
+<div class="repository">
+    <h2 onclick="toggleContent('reporth')">Online Uncertainty Quantification for a Drone's Return-to-Home Decision</h2>
+    <div id="reporth" class="content" style="display: none;">
+        <p class="abstract">
+            A drone triggers its automatic return when the remaining energy no longer covers the predicted return energy plus a fixed safety margin. Read as a forecast, this margin has the same spread for every flight. This project builds a <strong>flight-conditional predictive law</strong> of the battery charge at arrival and sets the margin from a chosen risk level (a low quantile) instead.
+        </p>
+        <p class="abstract">
+            The prediction loop is shown to have exactly five random inputs, each modelled as &mu; + F&xi; with a Gaussian germ frozen over the return. Candidate uncertainty models are ranked with the <strong>CRPS</strong>, a strictly proper scoring rule, through a logarithmic skill score that splits exactly into a centre and a width term, the latter bounded by 0.2256. On board, uncertainty is propagated by an <strong>unscented transform</strong> and by a <strong>Hermite polynomial chaos</strong> whose coefficients are learnt online by a <strong>Kalman filter</strong>, with a three-term bound on the error of the decision quantile.
+        </p>
+        <ul>
+            <li><strong>Data:</strong> 132 completed returns from real flight logs.</li>
+            <li><strong>Result:</strong> at equal survival, the quantile rule saves 0.58 points of state of charge on average and about 1 point on long returns; the smallness of the average gain is proved to be structural.</li>
+        </ul>
+        <div class="progress-bar">
+            <div class="progress" style="width: 100%;"></div>
+        </div>
+        <p class="progress-text">100% completed</p>
+        <a href="pdf/rth_uncertainty.pdf" target="_blank">research summary (2 pages)</a>
+    </div>
+</div>
+
 <!-- Repository: audience interests -->
 <div class="repository">
     <h2 onclick="toggleContent('repoaudience')">Inferring Audience Interests with BERT for Ad Targeting</h2>
