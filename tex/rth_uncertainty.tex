@@ -19,7 +19,7 @@
 \maketitle
 
 \begin{abstract}
-\noindent A drone triggers its automatic return when the remaining energy no longer covers the predicted return energy plus a margin $m=\kappa E+c$. Read as a Gaussian forecast, this rule has a spread that depends on the flight only through $E$. We build a flight-conditional predictive law of the arrival state of charge $Y$. Under explicit assumptions the prediction loop has exactly five exogenous random inputs and $Y=G(\Germ)$, $\Germ\sim\Norm(0,\Id_d)$. Each source is modelled as $\mu+F\Germ$ with a germ frozen over the return, which forces the model to expose $F$ rather than $FF\T$. Twenty-one candidate models are ranked by a logarithmic CRPS skill score that splits exactly into a centre and a width term, the latter bounded by $-\log_{10}\erf\sqrt{\ln 2/2}\approx0.2256$. On board, $G$ is propagated by an unscented transform and by a Hermite polynomial chaos whose coefficients are learnt online by a Kalman filter, with a three-term bound on the decision quantile. On $132$ returns the quantile rule saves $0.58$ SoC points of margin at equal survival; we prove this smallness is structural.
+\noindent A drone triggers its automatic return when the remaining energy no longer covers the predicted return energy plus a margin $m=\kappa E+c$. Read as a Gaussian forecast, this rule has a spread that depends on the flight only through $E$. We build a flight-conditional predictive law of the arrival state of charge $Y$. Under explicit assumptions the prediction loop has exactly five exogenous random inputs and $Y=G(\Germ)$, $\Germ\sim\Norm(0,\Id_d)$. Each source is modelled as $\mu+F\Germ$ with a germ frozen over the return, which forces the model to expose $F$ rather than $FF\T$. Candidate models are ranked by a logarithmic CRPS skill score that splits exactly into a centre and a width term, the latter bounded by $-\log_{10}\erf\sqrt{\ln 2/2}\approx0.2256$. On board, $G$ is propagated by an unscented transform and by a Hermite polynomial chaos whose coefficients are learnt online by a Kalman filter, with a three-term bound on the decision quantile. The value of conditioning is shown to be of second order.
 \end{abstract}
 
 \section{Decision problem}
@@ -39,7 +39,7 @@ This is the degree-one Hermite chaos, i.e.\ the $L^2(\gamma_d)$ projection of an
 \begin{equation}
 \bar X=\bar\mu+\bar F\Germ,\quad \bar F=\tfrac1N\textstyle\sum_kF(s_k),
 \end{equation}
-so $\sigma(\bar X)=\bar\sigma$ in 1-D, whereas independent steps would give $\mathrm{rms}(\sigma)/\sqrt N$, up to $\sqrt N$ ($10.95\times$ for $N=120$) too narrow. Two square roots of the same $\Sigma_k$ may aggregate differently ($F_1=\sigma\Id$, $F_2=-\sigma\Id$ give $\bar F=0$), so the model must expose $F$, taken as the unique symmetric PSD root of $\Sigma(s)$. An unknown spread is \texttt{NaN}, never $0$: $\sigma\to0$ yields the finite score $|y-\mu|$ of a perfectly confident forecast.
+so $\sigma(\bar X)=\bar\sigma$ in 1-D, whereas independent steps would give $\mathrm{rms}(\sigma)/\sqrt N$, up to $\sqrt N$ too narrow. Two square roots of the same $\Sigma_k$ may aggregate differently ($F_1=\sigma\Id$, $F_2=-\sigma\Id$ give $\bar F=0$), so the model must expose $F$, taken as the unique symmetric PSD root of $\Sigma(s)$.
 
 \section{Strictly proper scoring and the CRPS}
 For a score $S(\hat F,y)$ let $S(\hat F,G)=\E_{Y\sim G}S(\hat F,Y)$. $S$ is \emph{proper} on a class $\mathcal P$ if $S(G,G)\le S(\hat F,G)$ for all $\hat F,G\in\mathcal P$, \emph{strictly proper} if equality forces $\hat F=G$~\cite{gneiting2007}. Hence one criterion both ranks and calibrates.
@@ -59,7 +59,7 @@ By (ii) the CRPS averages the pinball losses of all quantiles, the decision func
 \begin{equation}\label{eq:gcrps}
 \CRPS(\Norm(\mu,\sigma^2),y)=\sigma\Big(z\erf\tfrac{z}{\sqrt2}+\sqrt{\tfrac2\pi}e^{-z^2/2}-\tfrac1{\sqrt\pi}\Big),
 \end{equation}
-jointly convex in $(\mu,\sigma)$ with Hessian $\sigma^{-1}\sqrt{2/\pi}e^{-z^2/2}(1,z)\T(1,z)$, minimised in $\sigma$ at $\sigma^\star=|y-\mu|/\sqrt{\ln2}$.
+jointly convex in $(\mu,\sigma)$, minimised in $\sigma$ at $\sigma^\star=|y-\mu|/\sqrt{\ln2}$.
 
 \textbf{Log skill score.} With a deterministic reference $\CRPS_{\mathrm{det}}=\sum_i|y_i-\mu_{\mathrm{det},i}|$ and marginal sum $\CRPS_p$, let $\mathrm{crpsl}=-\log_{10}(\CRPS_p/\CRPS_{\mathrm{det}})$. $-\log$ is the only decreasing scale additive over ratios (Cauchy equation), hence antisymmetric ($\pm0.301$ for a factor $2$). With $e=\sum_i|y_i-\mu_i|$,
 \begin{equation}
@@ -71,10 +71,10 @@ For all $\mu,y$ with $e>0$ and all $F$, $\mathrm{width}\le-\log_{10}\erf(\sqrt{\
 \begin{proof}
 At $\partial_\sigma=0$, $e^{-z^2/2}=2^{-1/2}$, $z^2=\ln2$ and \eqref{eq:gcrps} reduces to $|y-\mu|\erf(z/\sqrt2)$; sum the coordinates.
 \end{proof}
-The ceiling is the one number comparable across sources. Weights are fitted by $\min_w|\mathcal T|^{-1}\sum_{i\in\mathcal T}\CRPS(\Norm(\mu_i,\sigma_i(w)^2),y_i)$ on a persisted $80\,\%$ split of flights, convex when $\sigma_i$ is affine in $w$; in-sample scores are optimistic, $\E J_n(\hat w)\le\inf J\le\E J(\hat w)$, and two methods are only compared on their common events.
+The ceiling is the one number comparable across sources. Weights are fitted by $\min_w|\mathcal T|^{-1}\sum_{i\in\mathcal T}\CRPS(\Norm(\mu_i,\sigma_i(w)^2),y_i)$ on a persisted $80\,\%$ split of flights, convex when $\sigma_i$ is affine in $w$; in-sample scores are optimistic, $\E J_n(\hat w)\le\inf J\le\E J(\hat w)$.
 
 \section{Propagation}
-$q_\alpha$ of $G(\Germ)$ has no closed form even for $G=\xi_1\xi_2$ (density $\pi^{-1}K_0$). Monte Carlo needs $N=\alpha(1-\alpha)/(f(q_\alpha)^2\varepsilon^2)\approx8\,200$ calls/s for $\varepsilon=0.1$ point~\cite{vandervaart1998}; the on-board budget is $\approx8$.
+$q_\alpha$ of $G(\Germ)$ has no closed form even for $G=\xi_1\xi_2$ (density $\pi^{-1}K_0$). Monte Carlo reaches a standard error $\varepsilon$ only with $N=\alpha(1-\alpha)/(f(q_\alpha)^2\varepsilon^2)$ simulator calls~\cite{vandervaart1998}, far above an on-board budget of a few calls per second.
 
 \textbf{Unscented transform}~\cite{julier1997,wan2000}. With $\lambda=0$ ($\alpha_{\mathrm{UT}}=1,\kappa=0,\beta=2$): $\Xi_{\pm i}=\pm\sqrt d\,\bm e_i$, $W^m_i=W^c_i=1/(2d)$, $W^c_0=2$. The rule integrates every polynomial of degree $\le3$ exactly against $\gamma_d$ and returns mean and covariance exactly for affine $G$, at $2d+1$ calls; the predictive is $\Norm(\mu_{\mathrm{UT}},\sigma_{\mathrm{UT}}^2)$.
 
@@ -87,21 +87,27 @@ $D_N$ the Kolmogorov discrepancy of the $N$ quadrature nodes.
 \begin{proof}
 Triangle inequality through $q_\alpha(G_p)$, $q_\alpha(\hat G_p)$; Parseval turns $L^2$ errors into $R_p$ and $\|\hat{\bm c}-\bm c\|^2$; a Markov bound on $\{|X-X'|>\eta\}$ optimised in $\eta$ gives $\mathcal T$.
 \end{proof}
-The nodes are a Sobol sequence~\cite{sobol1967,joe2008} mapped by $z=\sqrt2\erf^{-1}(2u-1)$; Koksma--Hlawka~\cite{niederreiter1992} fails for an indicator, but the measured equivalent sample size is $2.4\times$.
+The nodes are a Sobol sequence~\cite{sobol1967} mapped by $z=\sqrt2\erf^{-1}(2u-1)$~\cite{niederreiter1992}.
 
 \section{Online learning: Kalman filter on coefficients}
 Truncation gives the \emph{linear} observation $G(\bm z)=\Psi(\bm z)\T\bm c+\varepsilon_{\mathrm{tr}}(\bm z)$, $\Var\varepsilon_{\mathrm{tr}}=R_p$, $\varepsilon_{\mathrm{tr}}\perp\Psi_{\bm a}$. We posit the state-space model
 \begin{equation}
 \bm c_{i+1}=\bm c_i+\bm w_i,\quad y_{i,r}=\Psi(\bm z_{i,r})\T\bm c_i+v_{i,r},
 \end{equation}
-$\bm w_i\sim\Norm(0,Q\Delta_i\Id)$, $v\sim\Norm(0,R)$. The Kalman update~\cite{kalman1960} $\nu=y-\bm h\T\hat{\bm c}$, $S=\bm h\T\mathrm P\bm h+R$, $\hat{\bm c}^+=\hat{\bm c}+\mathrm P\bm h\nu/S$, $\mathrm P^+=(\mathrm P^{-1}+\bm h\bm h\T/R)^{-1}$ is the exact Gaussian posterior. Two facts make it fit the problem. (a) $\E[\|\hat G_p-G_p\|^2_{L^2}\mid\text{data}]=\tr\mathrm P$: the posterior covariance \emph{is} the epistemic part of the error, distinct from the aleatoric spread $\sum_{\bm a\ne\bm0}\hat c_{\bm a}^2$. (b) $\mathrm P^+$ does not depend on $y$, so the optimal adaptive design equals the optimal non-adaptive one; germs are chosen greedily by the exact quantile-variance reduction $(\bm\gamma\T\mathrm P\bm h)^2/S$, $\bm\gamma=\nabla_{\bm c}q_\alpha=\E[\Psi(\Germ)\mid\Psi\T\bm c=q_\alpha]$~\cite{hong2009}. Replacing $\sum_r\bm h\bm h\T$ by $n\Id$, $\mathrm P=(R/n)u\Id$ with $u_{i+1}=((u_i+\varrho)^{-1}+1)^{-1}$, $\varrho=Q\Delta t\,n/R$: a tuning $(Q,R,P_0)$ does not transfer across call rates. Normalised innovations $\nu^2/S\sim\chi^2_1$ under the model diagnose mis-tuning~\cite{andersonmoore1979}; if the candidate pool spans $H$ with $\dim H<P=\binom{d+p}{p}$, directions in $H^\perp$ keep their prior variance whatever the number of calls.
+$\bm w_i\sim\Norm(0,Q\Delta_i\Id)$, $v\sim\Norm(0,R)$. The Kalman update~\cite{kalman1960} $\nu=y-\bm h\T\hat{\bm c}$, $S=\bm h\T\mathrm P\bm h+R$, $\hat{\bm c}^+=\hat{\bm c}+\mathrm P\bm h\nu/S$, $\mathrm P^+=(\mathrm P^{-1}+\bm h\bm h\T/R)^{-1}$ is the exact Gaussian posterior. (a) $\E[\|\hat G_p-G_p\|^2_{L^2}\mid\text{data}]=\tr\mathrm P$: the posterior covariance \emph{is} the epistemic part of the error, distinct from the aleatoric spread $\sum_{\bm a\ne\bm0}\hat c_{\bm a}^2$. (b) $\mathrm P^+$ does not depend on $y$, so the optimal adaptive design equals the optimal non-adaptive one; germs are chosen greedily by the exact quantile-variance reduction $(\bm\gamma\T\mathrm P\bm h)^2/S$, $\bm\gamma=\nabla_{\bm c}q_\alpha=\E[\Psi(\Germ)\mid\Psi\T\bm c=q_\alpha]$~\cite{hong2009}. Replacing $\sum_r\bm h\bm h\T$ by $n\Id$, $\mathrm P=(R/n)u\Id$ with $u_{i+1}=((u_i+\varrho)^{-1}+1)^{-1}$, $\varrho=Q\Delta t\,n/R$: a tuning does not transfer across call rates. Normalised innovations $\nu^2/S\sim\chi^2_1$ under the model diagnose mis-tuning~\cite{andersonmoore1979}; if the candidate pool spans $H$ with $\dim H<P=\binom{d+p}{p}$, directions in $H^\perp$ keep their prior variance whatever the number of calls.
 
-\section{Evaluation and why the gain is small}
-On a flown return, survival of criterion $s=\dt-m$ is $\Phi((y-s)/\sigma_{\mathrm{obs}})$, $\sigma_{\mathrm{obs}}$ the gauge uncertainty at arrival. Rules are compared at equal mean survival; the gain is the mean margin saved. On $n=132$ completed returns the chaos rule saves $+0.58$ point ($\alpha^\star\approx0.10$), $+0.98$ on long returns, the UT $+0.04$. Per flight the allocation is right: as $|\partial Y/\partial w|=\bar PD/((v^\star-w)^2J)$, a headwind gets more margin, a tailwind less.
+\section{Decision criterion and value of conditioning}
+\textbf{Survival.} On a completed return with gauge reading $y$ at arrival and reading uncertainty $\sigma_{\mathrm{obs}}$, the true charge is modelled $\Norm(y,\sigma_{\mathrm{obs}}^2)$ and the survival of a criterion $s=\dt-m$ is $\Phi((y-s)/\sigma_{\mathrm{obs}})$. Rules are compared at equal mean survival $\bar S$.
 
-\textbf{Structural bound.} Let the firmware error satisfy $\varepsilon\mid x\sim\Norm(b(x),s(x)^2)$, $\tau^2=s^2+\sigma_{\mathrm{obs}}^2$. If $b,\tau$ are constant, Jensen on the concave branch of $\Phi$ (rules with $b+m\ge0$) shows that a constant margin is optimal for any target mean survival $\ge1/2$. For independent $b,\tau$ with variances $v_b,v_\tau$, the constant margin matching the quantile rule $m_q=-b+z\tau$ satisfies
+\textbf{Structural bound.} Let the deterministic error satisfy $\varepsilon\mid x\sim\Norm(b(x),s(x)^2)$, $\tau^2=s^2+\sigma_{\mathrm{obs}}^2$, so that a rule $m(x)$ has conditional mean survival $\Phi((b+m)/\tau)$. The quantile rule $m_q=-b+z\tau$, $z=\Phi^{-1}(1-\alpha)$, solves the per-flight problem $\min\E m$ s.t.\ $\Phi((b+m)/\tau)\ge1-\alpha$ for all $x$. If $b,\tau$ are constant, Jensen on the concave branch of $\Phi$ shows that a constant margin is optimal for the mean-survival problem whenever $\bar S\ge1/2$.
+\begin{theorem}
+Let $b,\tau$ be independent with means $0,\bar\tau$ and variances $v_b,v_\tau$. The constant margin $m_c$ with the same mean survival as $m_q$ satisfies
 \[m_c-\E m_q=\tfrac{z}{2\bar\tau}\big(v_b+v_\tau(z^2-2)\big)+o(v_b+v_\tau).\]
-The gain is second order; heteroscedasticity pays only for $z>\sqrt2$ ($\alpha<0.079$), and the always-positive bias term is forfeited by re-centring on $\dt$. The value of conditional uncertainty thus appears under a per-flight risk guarantee or with conditional bias correction.
+\end{theorem}
+\begin{proof}
+Write $u=m_c/\bar\tau$ and $g(b,\tau)=\Phi((b+m_c)/\tau)$. At $(0,\bar\tau)$, $\partial_b^2g=-u\varphi(u)/\bar\tau^2$ and $\partial_\tau^2g=(2u-u^3)\varphi(u)/\bar\tau^2$, so $\E g=\Phi(u)+\frac{\varphi(u)}{2\bar\tau^2}\big(-uv_b+(2u-u^3)v_\tau\big)+o(\cdot)$. Equating with $\E\Phi((b+m_q)/\tau)=\Phi(z)$ and setting $u=z+\delta$ gives $\delta=\frac{z}{2\bar\tau^2}(v_b+(z^2-2)v_\tau)+o(\cdot)$; multiply by $\bar\tau$ and use $\E m_q=z\bar\tau$.
+\end{proof}
+The heteroscedastic term is positive only for $z>\sqrt2$, i.e.\ $\alpha<\Phi(-\sqrt2)\approx0.079$, while the bias term $zv_b/(2\bar\tau)$ is always positive but is forfeited by any predictive re-centred on $\dt$. Conditioning thus pays under a per-flight guarantee or with bias correction.
 
 \scriptsize
 \begin{thebibliography}{99}\setlength{\itemsep}{-1.2pt}\setlength{\parsep}{0pt}
@@ -112,7 +118,6 @@ The gain is second order; heteroscedasticity pays only for $z>\sqrt2$ ($\alpha<0
 \bibitem{gneiting2011} T.~Gneiting, R.~Ranjan. Comparing density forecasts using threshold- and quantile-weighted scoring rules. \emph{J.\ Bus.\ Econ.\ Stat.} 29(3):411--422, 2011.
 \bibitem{hoeffding1948} W.~Hoeffding. A class of statistics with asymptotically normal distribution. \emph{Ann.\ Math.\ Stat.} 19(3):293--325, 1948.
 \bibitem{hong2009} L.~Hong. Estimating quantile sensitivities. \emph{Oper.\ Res.} 57(1):118--130, 2009.
-\bibitem{joe2008} S.~Joe, F.~Kuo. Constructing Sobol sequences with better two-dimensional projections. \emph{SIAM J.\ Sci.\ Comput.} 30(5):2635--2654, 2008.
 \bibitem{jordan2019} A.~Jordan, F.~Kr\"uger, S.~Lerch. Evaluating probabilistic forecasts with scoringRules. \emph{J.\ Stat.\ Softw.} 90(12), 2019.
 \bibitem{julier1997} S.~Julier, J.~Uhlmann. New extension of the Kalman filter to nonlinear systems. \emph{Proc.\ SPIE} 3068, 1997.
 \bibitem{kalman1960} R.~Kalman. A new approach to linear filtering and prediction problems. \emph{J.\ Basic Eng.} 82(1):35--45, 1960.
