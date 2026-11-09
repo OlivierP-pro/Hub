@@ -340,6 +340,28 @@
 </div>
 
 
+<!-- Repository: audience interests -->
+<div class="repository">
+    <h2 onclick="toggleContent('repoaudience')">Inferring Audience Interests with BERT for Ad Targeting</h2>
+    <div id="repoaudience" class="content" style="display: none;">
+        <p class="abstract">
+            Advertisers usually target content (what a video is about), not audiences (who actually watches it). This project infers the interests of the audience of a social-media channel from the public comments it receives. Each comment is mapped by a contrastively fine-tuned BERT encoder to a point on the unit sphere, and a channel is represented by the <strong>kernel mean embedding</strong> of its comment distribution.
+        </p>
+        <p class="abstract">
+            Under a topic-mixture model of the audience, this embedding is a linear image of the average interest vector of the audience; its inner product with an advertiser's description equals the expected affinity of a random commenter with the product, which approximates a pointwise mutual information at the contrastive optimum. Its estimator concentrates at a dimension-free rate, and look-alike targeting reduces to a maximum mean discrepancy between audiences.
+        </p>
+        <ul>
+            <li><strong>Data:</strong> 3,154 French YouTube channels, comments only, no individual profiling.</li>
+            <li><strong>Result:</strong> recovers channels already sponsored by a given advertiser with AUC 0.87 (look-alike), an 18&times; lift over random in the top 20.</li>
+        </ul>
+        <div class="progress-bar">
+            <div class="progress" style="width: 50%;"></div>
+        </div>
+        <p class="progress-text">50% completed &middot; 5 clients</p>
+        <a href="pdf/audience_interest_bert.pdf" target="_blank">research summary (2 pages)</a>
+    </div>
+</div>
+
     <!-- Repository final -->
     <div class="repository">
         <h2 onclick="toggleContent('repofinal')"></h2>

@@ -1,0 +1,133 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[a4paper,margin=1.6cm,columnsep=0.6cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,amsthm,bm}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{0.9ex}{0.5ex}
+\titleformat{\section}{\normalfont\bfseries}{\thesection.}{0.4em}{}
+\setlength{\abovedisplayskip}{3pt}\setlength{\belowdisplayskip}{3pt}
+\setlength{\abovedisplayshortskip}{2pt}\setlength{\belowdisplayshortskip}{2pt}
+\setlength{\parskip}{0pt}
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}\newtheorem*{remark}{Remark}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\newcommand{\Sph}{\mathbb{S}^{d-1}}
+
+\title{\vspace{-1.2cm}\bfseries Inferring Audience Interests from Comment Streams\\ with Transformer Sentence Embeddings:\\ a Kernel Mean Embedding View of Ad Targeting}
+\author{Olivier P.\\{\small Projects-Hub, \today}}
+\date{\vspace{-0.9cm}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent We formalise the problem of inferring the interests of the audience of a social-media channel from the public comments it receives, in order to match advertisers with audiences rather than with content. Comments are mapped by a contrastively fine-tuned BERT encoder to the unit sphere; a channel is then represented by the \emph{kernel mean embedding} of its comment distribution. We show that (i) under a topic-mixture model of the audience, this embedding is an affine image of the average interest vector and is identifiable up to a linear map, (ii) its weighted empirical estimator concentrates at rate $\|\bm w\|_2$, (iii) inner products with an advertiser query equal the expected query affinity of a random commenter, which, under the InfoNCE optimum, approximates a pointwise mutual information. Look-alike targeting reduces to a maximum mean discrepancy. On 3\,154 French YouTube channels, ranking by these statistics recovers channels already sponsored by a given advertiser with AUC $0.87$.
+\end{abstract}
+
+\section{Problem}
+Let $\mathcal C$ be a set of channels and $\mathcal X$ the space of finite token strings. The audience of $c\in\mathcal C$ is a population $U_c$ of users, each endowed with a latent interest vector $\theta_u\in\Delta^{K-1}$ over $K$ interest topics. We observe only comments $X_1,\dots,X_n\in\mathcal X$ written by members of $U_c$. An advertiser describes a target by a text $q$. The goal is a score $s(c,q)$ that is monotone in the expected interest of $U_c$ for $q$, computable from comments alone, and that does not require any individual-level profile.
+
+\section{BERT and sentence embeddings}
+\textbf{Encoder.} A string is tokenised into $t_1,\dots,t_L$ and embedded as $H^{(0)}=E_{\mathrm{tok}}+E_{\mathrm{pos}}\in\R^{L\times d}$. Each of the $N$ layers of a Transformer encoder~\cite{vaswani2017} applies multi-head self-attention,
+\begin{equation}
+\mathrm{Att}(Q,K,V)=\operatorname{softmax}\!\Big(\tfrac{QK^\top}{\sqrt{d_h}}+B\Big)V,\quad Q=HW^Q_j,\;K=HW^K_j,\;V=HW^V_j,
+\end{equation}
+($B$ masks padding), concatenates the $h$ heads, and composes with residual connections, layer normalisation and a position-wise network: $H'=\mathrm{LN}(H+\mathrm{MHA}(H))$, $H^{+}=\mathrm{LN}(H'+W_2\,\mathrm{GELU}(W_1H'))$. Every output vector $h_i^{(N)}$ is thus a context-dependent function of the whole sequence. BERT~\cite{devlin2019} is pre-trained by masked language modelling: for a random subset $M$ ($\approx15\%$) of positions,
+\begin{equation}
+\mathcal L_{\mathrm{MLM}}(\vartheta)=-\E_{x,M}\textstyle\sum_{i\in M}\log p_\vartheta\big(t_i\mid x_{\setminus M}\big),
+\end{equation}
+which forces $h_i^{(N)}$ to encode the distributional semantics of the context.
+
+\textbf{Sentence map.} Token states are mean-pooled and normalised,
+$\phi(x)=\bar h/\|\bar h\|$, $\bar h=\frac1L\sum_i h_i^{(N)}$, so $\phi:\mathcal X\to\Sph$. Raw MLM states are strongly anisotropic~\cite{ethayarajh2019}; Sentence-BERT~\cite{reimers2019,reimers2020} and E5~\cite{wang2022e5} therefore fine-tune $\phi$ on pairs $(x,x^+)$ with the InfoNCE loss~\cite{oord2018}
+\begin{equation}
+\mathcal L=-\E\log\frac{\exp(\ip{\phi(x)}{\phi(x^+)}/\tau)}{\sum_{j=0}^{m}\exp(\ip{\phi(x)}{\phi(x_j)}/\tau)},
+\end{equation}
+with $x_0=x^+$ and $m$ negatives. At the population optimum of an unconstrained critic $f$, $\exp f(x,y)\propto p(y\mid x)/p(y)$~\cite{oord2018}; hence, to the extent the encoder attains it,
+\begin{equation}\label{eq:pmi}
+\ip{\phi(x)}{\phi(y)}\approx\tau\,\mathrm{PMI}(x;y)+\mathrm{const}(x).
+\end{equation}
+Cosine similarity is thus a (scaled) estimate of semantic association, and the bilinear form $k(x,y)=\ip{\phi(x)}{\phi(y)}$ is a bounded positive-definite kernel on $\mathcal X$ with $k(x,x)=1$.
+
+\section{Audience as a distribution}
+\begin{definition}
+Let $P_c$ be the law of a comment written by a random member of $U_c$. The \emph{audience embedding} of $c$ is the kernel mean embedding~\cite{smola2007,muandet2017}
+$\mu_c=\E_{X\sim P_c}[\phi(X)]\in\mathbb B^d$.
+\end{definition}
+Since $\phi$ is bounded, $\mu_c$ exists, and by linearity, for any query embedding $\psi(q)=\phi(q)$,
+\begin{equation}\label{eq:score}
+\ip{\mu_c}{\psi(q)}=\E_{X\sim P_c}\,k(X,q),
+\end{equation}
+i.e.\ the expected affinity of a random commenter with the advertiser text; by \eqref{eq:pmi} it is $\tau\,\E_{P_c}\mathrm{PMI}(X;q)$ up to an additive term.
+
+\textbf{Topic mixture.} Assume, as in LDA~\cite{blei2003}, that a user with interests $\theta$ writes $X\sim\sum_k\theta_kQ_k$, $Q_k$ the comment law of topic $k$, and let $\rho_c$ be the law of $\theta_u$ on $U_c$.
+\begin{proposition}[linear identifiability]\label{prop:id}
+Let $m_k=\E_{Q_k}\phi$, $M=[m_1|\cdots|m_K]$ and $\bar\pi_c=\E_{\rho_c}\theta$. Then $\mu_c=M\bar\pi_c$. If $\operatorname{rank}M=K$, $\bar\pi_c=M^{+}\mu_c$ is uniquely determined by $\mu_c$, and for every query
+$\ip{\mu_c}{\psi(q)}=\sum_k\bar\pi_{c,k}\,a_k(q)$, $a_k(q)=\ip{m_k}{\psi(q)}$.
+\end{proposition}
+\begin{proof}
+By Fubini, $\mu_c=\int\!\sum_k\theta_k m_k\,d\rho_c(\theta)=M\bar\pi_c$; full column rank gives $M^+M=I_K$.
+\end{proof}
+The score therefore ranks channels by the \emph{average interest of their audience}, weighted by how strongly each topic relates to the product. Only $\bar\pi_c$---not the higher moments of $\rho_c$---is identifiable from $\mu_c$ with a linear kernel; heterogeneity is recovered by the sub-audience decomposition below.
+
+\textbf{Common component and hubness.} All comment laws share a generic component (greetings, ``great video''), so $m_k=g+\tilde m_k$ with a large common $g$ and cosines are tightly concentrated. We therefore use the centred embedding $\mu_c-g$, $g=|\mathcal C|^{-1}\sum_c\mu_c$, and correct hubness~\cite{radovanovic2010} as in CSLS~\cite{conneau2018}: with a set $\mathcal P$ of unrelated probe topics,
+\begin{equation}
+\tilde s(c,q)=\ip{\mu_c}{\psi(q)}-\tfrac1{|\mathcal P|}\textstyle\sum_{p\in\mathcal P}\ip{\mu_c}{\psi(p)}=\ip{\mu_c}{\psi(q)-\bar\psi_{\mathcal P}},
+\end{equation}
+still linear in $\mu_c$, so Prop.~\ref{prop:id} applies with $a_k(q)$ replaced by its excess over a random topic. Scores are finally standardised across channels ($z$-scores), since only the relative order matters for targeting.
+
+\section{Estimation}
+Comments are not i.i.d.\ across videos and their likes encode endorsement. We take deterministic weights $w_i\ge0$, $\sum_iw_i=1$, giving each video equal mass split proportionally to $1+\log(1+\mathrm{likes}_i)$, and set $\hat\mu_c=\sum_iw_i\phi(X_i)$.
+\begin{proposition}[concentration]
+If $X_1,\dots,X_n\overset{\mathrm{iid}}{\sim}P_c$, then with probability at least $1-\delta$,
+\[
+\|\hat\mu_c-\mu_c\|\le\|\bm w\|_2\big(1+\sqrt{2\log(1/\delta)}\big),
+\]
+and $|\ip{\hat\mu_c-\mu_c}{\psi(q)}|$ obeys the same bound uniformly in $q$.
+\end{proposition}
+\begin{proof}
+$\E\|\hat\mu_c-\mu_c\|^2=\sum_iw_i^2\E\|\phi(X_i)-\mu_c\|^2\le\|\bm w\|_2^2$, and Jensen bounds the mean of the norm. Replacing $X_i$ changes $\|\hat\mu_c-\mu_c\|$ by at most $2w_i$; McDiarmid's inequality~\cite{mcdiarmid1989} gives $\Pr(\cdot-\E\,\cdot\ge t)\le\exp(-t^2/(2\|\bm w\|_2^2))$. Cauchy--Schwarz with $\|\psi(q)\|=1$ gives the second claim.
+\end{proof}
+The effective sample size is $n_{\mathrm{eff}}=\|\bm w\|_2^{-2}\le n$; the bound is dimension-free, which is what makes $d=384$ embeddings usable with a few hundred comments per channel.
+
+\textbf{Sub-audiences.} Weighted $k$-means~\cite{lloyd1982} minimises $\sum_iw_i\|\phi(X_i)-\gamma_{\kappa(i)}\|^2$ and yields centroids $\gamma_1,\dots,\gamma_k$ with masses $\omega_j$; the score $\max_{j:\omega_j\ge0.1}\ip{\gamma_j}{\psi(q)}$ detects a niche segment that the mean dilutes.
+
+\section{From scores to targeting}
+\textbf{Response model.} Suppose a user who writes $x$ responds to the ad with probability $r(x)=\alpha+\beta\,k(x,q)$, $\beta>0$ (first-order expansion of any smooth link). Then the expected response rate of $U_c$ is $\alpha+\beta\ip{\mu_c}{\psi(q)}$, so ranking by \eqref{eq:score} is \emph{exactly} ranking by expected conversion; for a nonlinear link $\sigma$, the error is a Jensen gap of order $\tfrac12\sup|\sigma''|\,\mathrm{Var}_{P_c}k(X,q)$. With reach $v_c$ (expected views) and price $\pi_c$, the advertiser solves a knapsack $\max\sum_c y_c\,v_c(\alpha+\beta\tilde s_c)$ s.t.\ $\sum_cy_c\pi_c\le$ budget.
+
+\textbf{Facets.} A target ``travellers, price-sensitive, worried about public Wi-Fi'' encoded as one vector averages its parts. We score each facet $q_f$ separately, $T_f(c)$, and combine $S_\lambda(c)=\overline{T}(c)-\lambda\,\mathrm{sd}_f\,T_f(c)$. For $F=2$, $\overline T-\mathrm{sd}\,T=\min(T_1,T_2)$, so $\lambda\in[0,1]$ interpolates between the mean and a logical AND.
+
+\textbf{Look-alike.} Given channels $R$ already sponsored by a competitor, let $\nu_R=|R|^{-1}\sum_{r\in R}(\mu_r-g)$ and score $\cos(\mu_c-g,\nu_R)$. Since $\|\mu_c-\mu_r\|^2=\mathrm{MMD}_k^2(P_c,P_r)$~\cite{gretton2012}, this is a nearest-neighbour rule in the maximum mean discrepancy between audiences, independent of any textual description of the product.
+
+\section{Empirical evidence and limits}
+On $3\,154$ French channels (\texttt{multilingual-e5-small}, $d=384$), with ground truth the $102$ channels sponsored by a VPN brand (base rate $3\%$), the area under the ROC curve, $\mathrm{AUC}=\Pr(s(C^+)>s(C^-))$~\cite{hanley1982}, is $0.68$--$0.76$ for text queries and $0.87$ for look-alike, with an $18\times$ lift in precision at 20.
+
+Three limits follow from the model. (a) $P_c$ is the law of \emph{commenters}, a selected subset of viewers; without propensities the estimate is biased toward engaged users. (b) Comments react to video content, so $\mu_c$ mixes audience and content; subtracting a content embedding isolates ``hidden'' audiences whose interests the creator does not discuss. (c) Demographic attributes are not identifiable this way: they do not enter $k(X,q)$ through semantics but through lexical cues. Finally, although private traits are predictable from digital traces~\cite{kosinski2013}, the method only ever estimates population means $\mu_c$, in line with data minimisation.
+
+\footnotesize
+\begin{thebibliography}{99}\setlength{\itemsep}{0pt}
+\bibitem{blei2003} D.~Blei, A.~Ng, M.~Jordan. Latent Dirichlet allocation. \emph{JMLR} 3:993--1022, 2003.
+\bibitem{conneau2018} A.~Conneau et al. Word translation without parallel data. \emph{ICLR}, 2018.
+\bibitem{devlin2019} J.~Devlin, M.-W.~Chang, K.~Lee, K.~Toutanova. BERT: pre-training of deep bidirectional Transformers for language understanding. \emph{NAACL}, 2019.
+\bibitem{ethayarajh2019} K.~Ethayarajh. How contextual are contextualized word representations? \emph{EMNLP}, 2019.
+\bibitem{gretton2012} A.~Gretton, K.~Borgwardt, M.~Rasch, B.~Sch\"olkopf, A.~Smola. A kernel two-sample test. \emph{JMLR} 13:723--773, 2012.
+\bibitem{hanley1982} J.~Hanley, B.~McNeil. The meaning and use of the area under a ROC curve. \emph{Radiology} 143:29--36, 1982.
+\bibitem{kosinski2013} M.~Kosinski, D.~Stillwell, T.~Graepel. Private traits and attributes are predictable from digital records of human behavior. \emph{PNAS} 110(15), 2013.
+\bibitem{lloyd1982} S.~Lloyd. Least squares quantization in PCM. \emph{IEEE Trans.\ Inf.\ Theory} 28(2):129--137, 1982.
+\bibitem{mcdiarmid1989} C.~McDiarmid. On the method of bounded differences. \emph{Surveys in Combinatorics}, 148--188, 1989.
+\bibitem{muandet2017} K.~Muandet, K.~Fukumizu, B.~Sriperumbudur, B.~Sch\"olkopf. Kernel mean embedding of distributions: a review and beyond. \emph{Found.\ Trends Mach.\ Learn.} 10(1--2), 2017.
+\bibitem{oord2018} A.~van den Oord, Y.~Li, O.~Vinyals. Representation learning with contrastive predictive coding. arXiv:1807.03748, 2018.
+\bibitem{radovanovic2010} M.~Radovanovi\'c, A.~Nanopoulos, M.~Ivanovi\'c. Hubs in space: popular nearest neighbors in high-dimensional data. \emph{JMLR} 11:2487--2531, 2010.
+\bibitem{reimers2019} N.~Reimers, I.~Gurevych. Sentence-BERT: sentence embeddings using Siamese BERT-networks. \emph{EMNLP}, 2019.
+\bibitem{reimers2020} N.~Reimers, I.~Gurevych. Making monolingual sentence embeddings multilingual using knowledge distillation. \emph{EMNLP}, 2020.
+\bibitem{smola2007} A.~Smola, A.~Gretton, L.~Song, B.~Sch\"olkopf. A Hilbert space embedding for distributions. \emph{ALT}, 2007.
+\bibitem{vaswani2017} A.~Vaswani et al. Attention is all you need. \emph{NeurIPS}, 2017.
+\bibitem{wang2022e5} L.~Wang et al. Text embeddings by weakly-supervised contrastive pre-training. arXiv:2212.03533, 2022.
+\end{thebibliography}
+\end{document}
